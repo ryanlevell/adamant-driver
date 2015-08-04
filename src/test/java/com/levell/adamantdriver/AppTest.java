@@ -1,11 +1,11 @@
-package com.levell.wdfw;
+package com.levell.adamantdriver;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.levell.wdfw.WdWrapper;
+import com.levell.adamantdriver.WdWrapper;
 
 public class AppTest {
 
@@ -59,7 +59,6 @@ public class AppTest {
 	//
 	@Test(dataProvider = "with_wd3")
 	public void testApp7(WdWrapper driver, String str) {
-		// public void testApp7(String str) {
 		System.out.println("\"" + str + "\"..........");
 		driver.raw().get("http://google.com");
 		try {
