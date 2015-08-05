@@ -5,13 +5,13 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.levell.adamantdriver.WdWrapper;
+import com.levell.adamantdriver.AdamantDriver;
 
 public class AppTest {
 
 	// test with only WdWrapper param
 	@Test
-	public void testApp(WdWrapper driver) {
+	public void testApp(AdamantDriver driver) {
 		System.out.println("test..........");
 		driver.raw().get("http://google.com");
 	}
@@ -37,28 +37,28 @@ public class AppTest {
 
 	// test with WdWrapper param and DP param
 	@Test(dataProvider = "with_wd")
-	public void testApp5(WdWrapper driver, String str) {
+	public void testApp5(AdamantDriver driver, String str) {
 		System.out.println("\"" + str + "\"..........");
 		driver.raw().get("http://google.com");
 	}
 
 	// test with same DP as test5
 	@Test(dataProvider = "with_wd")
-	public void testApp5_5(WdWrapper driver, String str) {
+	public void testApp5_5(AdamantDriver driver, String str) {
 		System.out.println("\"" + str + "_5\"..........");
 		driver.raw().get("http://google.com");
 	}
 
 	// test with different DP
 	@Test(dataProvider = "with_wd2")
-	public void testApp6(WdWrapper driver, String str, String str2) {
+	public void testApp6(AdamantDriver driver, String str, String str2) {
 		System.out.println("\"" + str + "\"..........\"" + str2 + "\"");
 		driver.raw().get("http://google.com");
 	}
 
 	//
 	@Test(dataProvider = "with_wd3")
-	public void testApp7(WdWrapper driver, String str) {
+	public void testApp7(AdamantDriver driver, String str) {
 		System.out.println("\"" + str + "\"..........");
 		driver.raw().get("http://google.com");
 		try {

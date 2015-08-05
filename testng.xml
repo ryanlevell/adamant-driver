@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
 	<listeners>
-		<listener class-name="com.levell.wdfw.WebDriverListener" />
+		<listener class-name="com.levell.adamantdriver.WebDriverListener" />
 	</listeners>
-
 	<test name="Test">
 		<classes>
-			<class name="com.javacodegeeks.testng.TestClass" />
+			<class name="com.levell.adamantdriver.AppTest" />
 		</classes>
 	</test>
 </suite>

@@ -18,7 +18,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
 
 			if (paramTypes != null && 0 < paramTypes.length) {
-				if (paramTypes[0].isAssignableFrom(WdWrapper.class)) {
+				if (paramTypes[0].isAssignableFrom(AdamantDriver.class)) {
 					if (paramTypes.length == 1) {
 						annotation.setDataProviderClass(DataProviders.class);
 						annotation.setDataProvider("INJECT_WEBDRIVER");
@@ -49,8 +49,8 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 			return;
 		}
 		Object param1 = result.getParameters()[0];
-		if (param1 instanceof WdWrapper) {
-			((WdWrapper) param1).raw().quit();
+		if (param1 instanceof AdamantDriver) {
+			((AdamantDriver) param1).raw().quit();
 		}
 	}
 

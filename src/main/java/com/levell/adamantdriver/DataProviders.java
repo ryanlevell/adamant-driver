@@ -47,7 +47,6 @@ public class DataProviders {
 	public static boolean isParallel(Method m) {
 		// get annotations for each method in dp class
 		for (Annotation a : m.getAnnotations()) {
-
 			// use if annotation is dp
 			if (a.annotationType().isAssignableFrom(DataProvider.class)) {
 				return ((DataProvider) a).parallel();
@@ -63,22 +62,13 @@ public class DataProviders {
 		// get all method in the dp class
 		Method[] classMethods = dpClass.getMethods();
 		for (Method m : classMethods) {
-
 			// get annotations for each method in dp class
 			for (Annotation a : m.getAnnotations()) {
-
 				// use if annotation is dp
 				if (a.annotationType().isAssignableFrom(DataProvider.class)) {
-
-					// loop through annotation attributes
-					for (Method aMethod : a.annotationType().getDeclaredMethods()) {
-						// find "name" attribute
-						if (aMethod.getName().equalsIgnoreCase("name")) {
-							String name = ((DataProvider) a).name();
-							if (name.equals(dpName)) {
-								return m;
-							}
-						}
+					String name = ((DataProvider) a).name();
+					if (name.equals(dpName)) {
+						return m;
 					}
 				}
 			}
@@ -88,7 +78,7 @@ public class DataProviders {
 
 	@DataProvider(name = "INJECT_WEBDRIVER", parallel = false)
 	public static Object[][] injectWebDriver() {
-		return new Object[][] { { new WdWrapper() } };
+		return new Object[][] { { new AdamantDriver() } };
 	}
 
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS", parallel = false)
@@ -110,7 +100,7 @@ public class DataProviders {
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
 			Object[] row = new Object[params[0].length + 1];
-			row[0] = new WdWrapper();
+			row[0] = new AdamantDriver();
 			for (int j = 1; j < paramsWithWd[0].length; j++) {
 				row[j] = params[i][j - 1];
 			}
