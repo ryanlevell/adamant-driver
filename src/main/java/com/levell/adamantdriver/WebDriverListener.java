@@ -8,6 +8,7 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
+import org.testng.annotations.Test;
 
 public class WebDriverListener implements IAnnotationTransformer, ITestListener {
 
@@ -16,22 +17,14 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 
 		if (testMethod != null) {
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
-
 			if (paramTypes != null && 0 < paramTypes.length) {
 				if (paramTypes[0].isAssignableFrom(AdamantDriver.class)) {
 					if (paramTypes.length == 1) {
 						annotation.setDataProviderClass(DataProviders.class);
 						annotation.setDataProvider("INJECT_WEBDRIVER");
 					} else {
-
-						Class<?> dpClass = DataProviders.getDPClass(annotation, testMethod);
-						Method dpMethod = DataProviders.getDPMethod(annotation, dpClass);
-
-						Object[][] params = DataProviders.callDataProvider(dpClass, dpMethod);
-
-						// make key the test method name (unique)
-						DataProviders.OLD_DP_PARAMS.put(testMethod.getName(), params);
-
+						Class<?> dpClass = DataProviders.getDPClass(testMethod);
+						Method dpMethod = DataProviders.getDPMethod(testMethod.getAnnotation(Test.class), dpClass);
 						annotation.setDataProviderClass(DataProviders.class);
 						if (DataProviders.isParallel(dpMethod)) {
 							annotation.setDataProvider("INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL");

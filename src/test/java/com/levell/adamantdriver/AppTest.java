@@ -1,5 +1,8 @@
 package com.levell.adamantdriver;
 
+import java.lang.reflect.Method;
+
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -7,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.levell.adamantdriver.AdamantDriver;
 
+//TODO: add tests for all combinations of DP parameters
 public class AppTest {
 
 	// test with only WdWrapper param
@@ -69,12 +73,16 @@ public class AppTest {
 	}
 
 	@DataProvider(name = "without_wd")
-	public static Object[][] withoutWD() {
+	public static Object[][] withoutWD(ITestContext context, Method method) {
+		System.out.println(context);
+		System.out.println(method);
 		return new Object[][] { { "test4" } };
 	}
 
+	// TODO test with ITestContext and Method DI
 	@DataProvider(name = "with_wd")
-	public static Object[][] withWD() {
+	// public static Object[][] withWD() {
+	public static Object[][] withWD(ITestContext context, Method m) {
 		return new Object[][] { { "test5" } };
 	}
 

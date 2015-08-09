@@ -3,27 +3,38 @@ package com.levell.adamantdriver;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.ITestAnnotation;
+import org.testng.annotations.Test;
 
 public class DataProviders {
 
-	// TODO works for multiple suites?
-	public static final Map<String, Object[][]> OLD_DP_PARAMS = new HashMap<String, Object[][]>();
+	public static Object[][] callDataProvider(ITestContext testContext, Method testMethod) {
 
-	public static Object[][] callDataProvider(Class<?> dpClass, Method dpMethod) {
+		// get dp class and method
+		Test ta = testMethod.getAnnotation(Test.class);
+		Class<?> dpClass = getDPClass(testMethod);
+		Method dpMethod = getDPMethod(ta, dpClass);
+
 		Object[][] params = null;
 		try {
-			// TODO need to handle injected params method types as well
-			Method method = dpClass.getMethod(dpMethod.getName());
-			params = (Object[][]) method.invoke(null);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
+			Class<?>[] types = dpMethod.getParameterTypes();
+			if (types.length == 2) {
+				if (types[0].isAssignableFrom(ITestContext.class)) {
+					params = (Object[][]) dpMethod.invoke(null, testContext, testMethod);
+				} else {
+					params = (Object[][]) dpMethod.invoke(null, testMethod, testContext);
+				}
+			} else if (types.length == 1) {
+				if (types[0].isAssignableFrom(ITestContext.class)) {
+					params = (Object[][]) dpMethod.invoke(null, testContext);
+				} else if (types[0].isAssignableFrom(Method.class)) {
+					params = (Object[][]) dpMethod.invoke(null, testMethod);
+				}
+			} else {
+				params = (Object[][]) dpMethod.invoke(null);
+			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
@@ -34,10 +45,10 @@ public class DataProviders {
 		return params;
 	}
 
-	public static Class<?> getDPClass(ITestAnnotation testAnnotation, Method testMethod) {
+	public static Class<?> getDPClass(Method testMethod) {
 		// get dp name and dp class
-		Class<?> dpClass = testAnnotation.getDataProviderClass();
-		if (dpClass == null) {
+		Class<?> dpClass = testMethod.getAnnotation(Test.class).dataProviderClass();
+		if (dpClass == null || dpClass instanceof Object) {
 			// class is declaring class if no dp class attribute
 			dpClass = testMethod.getDeclaringClass();
 		}
@@ -55,9 +66,9 @@ public class DataProviders {
 		return false;
 	}
 
-	public static Method getDPMethod(ITestAnnotation testAnnotation, Class<?> dpClass) {
+	public static Method getDPMethod(Test testAnnotation, Class<?> dpClass) {
 
-		String dpName = testAnnotation.getDataProvider();
+		String dpName = testAnnotation.dataProvider();
 
 		// get all method in the dp class
 		Method[] classMethods = dpClass.getMethods();
@@ -76,24 +87,25 @@ public class DataProviders {
 		return null;
 	}
 
-	@DataProvider(name = "INJECT_WEBDRIVER", parallel = false)
+	@DataProvider(name = "INJECT_WEBDRIVER")
 	public static Object[][] injectWebDriver() {
 		return new Object[][] { { new AdamantDriver() } };
 	}
 
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS", parallel = false)
-	public static Object[][] injectWebDriverWithParams(Method m) {
-		return addWdInParams(m);
+	public static Object[][] injectWebDriverWithParams(ITestContext context, Method method) {
+		Object[][] params = callDataProvider(context, method);
+		return addWdInParams(params);
 	}
 
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL", parallel = true)
-	public static Object[][] injectWebDriverWithParamsParallel(Method m) {
-		return addWdInParams(m);
+	public static Object[][] injectWebDriverWithParamsParallel(ITestContext context, Method method) {
+		Object[][] params = callDataProvider(context, method);
+		return addWdInParams(params);
 	}
 
-	private static Object[][] addWdInParams(Method m) {
-		Object[][] params = null;
-		params = OLD_DP_PARAMS.remove(m.getName());
+	private static Object[][] addWdInParams(Object[][] oldParams) {
+		Object[][] params = oldParams;
 
 		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
 
