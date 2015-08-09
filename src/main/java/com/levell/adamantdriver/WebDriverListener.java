@@ -43,7 +43,10 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 		}
 		Object param1 = result.getParameters()[0];
 		if (param1 instanceof AdamantDriver) {
-			((AdamantDriver) param1).raw().quit();
+			AdamantDriver driver = (AdamantDriver) param1;
+			if(driver.isOpen()) {
+				driver.raw().quit();
+			}
 		}
 	}
 
