@@ -3,7 +3,7 @@ package com.levell.adamantdriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-//TODO: make fully compositional inheritance of WebDriver
+//TODO: make fully compositional inheritance of WebDriver???
 public class AdamantDriver {
 
 	private WebDriver driver;

@@ -48,7 +48,9 @@ public class DataProviders {
 	public static Class<?> getDPClass(Method testMethod) {
 		// get dp name and dp class
 		Class<?> dpClass = testMethod.getAnnotation(Test.class).dataProviderClass();
-		if (dpClass == null || dpClass instanceof Object) {
+
+		// #dataProviderClass() returns Object if not found so check for it explicitly
+		if (dpClass == null || dpClass == Object.class) {
 			// class is declaring class if no dp class attribute
 			dpClass = testMethod.getDeclaringClass();
 		}
@@ -84,7 +86,8 @@ public class DataProviders {
 				}
 			}
 		}
-		return null;
+		throw new IllegalStateException("Data Provider not found with name [" + dpName + "] in class [" + dpClass
+				+ "]. Check that the DataProvider name and DataProvider class are correct.");
 	}
 
 	@DataProvider(name = "INJECT_WEBDRIVER")
