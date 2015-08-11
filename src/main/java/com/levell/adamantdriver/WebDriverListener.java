@@ -45,7 +45,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 		if (param1 instanceof AdamantDriver) {
 			AdamantDriver driver = (AdamantDriver) param1;
 			if(driver.isOpen()) {
-				driver.raw().quit();
+				driver.quit();
 			}
 		}
 	}

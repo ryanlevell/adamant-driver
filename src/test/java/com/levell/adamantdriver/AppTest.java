@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
@@ -13,9 +14,8 @@ import org.testng.annotations.Test;
 
 import com.levell.adamantdriver.AdamantDriver;
 
-import junit.framework.Assert;
-
 //TODO: test with other listeners
+//TODO: test with other WD classes (options, navigate, etc)
 public class AppTest {
 	@Test
 	public void testNoParams() {
@@ -25,79 +25,79 @@ public class AppTest {
 	@Parameters("test!")
 	@Test
 	public void testNonDriverParam(@Optional("test!") String str) {
-		Assert.assertEquals("test!", str);
+		Assert.assertEquals(str, "test!");
 	}
 
 	@Test(dataProvider = "test")
 	public void testNonDriverDataProviderParam(String str) {
-		Assert.assertEquals("test!", str);
+		Assert.assertEquals(str, "test!");
 	}
 
 	@Test
 	public void testDriverParam(AdamantDriver driver) {
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "test")
 	public void testDriverAndDataProviderParam(AdamantDriver driver, String str) {
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
-		Assert.assertEquals("test!", str);
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
+		Assert.assertEquals(str, "test!");
 	}
 
 	@Test(dataProvider = "test")
 	public void testDriverAndDataProviderParamAgain(AdamantDriver driver, String str) {
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
-		Assert.assertEquals("test!", str);
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
+		Assert.assertEquals(str, "test!");
 	}
 
 	@Test(dataProvider = "test", dataProviderClass = AppTestDataProviders.class)
 	public void testDriverAndDifferentClassDataProviderParam(AdamantDriver driver, String str) {
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
-		Assert.assertEquals("test_different_class!", str);
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
+		Assert.assertEquals(str, "test_different_class!");
 	}
 
 	@Test(dataProvider = "inject_method")
 	public void testDriverAndDataProviderWithMethod(AdamantDriver driver, Method m) {
 		Assert.assertNotNull(m);
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "inject_context")
 	public void testDriverAndDataProviderWithContext(AdamantDriver driver, ITestContext c) {
 		Assert.assertNotNull(c);
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "inject_method_context")
 	public void testDriverAndDataProviderWithMethodAndContext(AdamantDriver driver, Method m, ITestContext c) {
 		Assert.assertNotNull(m);
 		Assert.assertNotNull(c);
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "inject_context_method")
 	public void testDriverAndDataProviderWithContextAndMethod(AdamantDriver driver, ITestContext c, Method m) {
 		Assert.assertNotNull(c);
 		Assert.assertNotNull(m);
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	private static int pos = 0;
 
 	@Test(dataProvider = "test_2_params")
 	public void testDriverAndTwoDataProviderParams(AdamantDriver driver, String str, String str2) {
-		Assert.assertEquals("with_wd2_" + pos + pos++, str);
-		Assert.assertEquals("with_wd2_" + pos + pos++, str2);
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		Assert.assertEquals(str, "with_wd2_" + pos + pos++);
+		Assert.assertEquals(str2, "with_wd2_" + pos + pos++);
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	private static List<String> values = new ArrayList<String>(Arrays.asList("parallel_0", "parallel_1", "parallel_2",
@@ -105,8 +105,8 @@ public class AppTest {
 
 	@Test(dataProvider = "parallel")
 	public void testParallelDataProviderTests(AdamantDriver driver, String str) {
-		driver.raw().get("http://google.com");
-		Assert.assertEquals("Google", driver.raw().getTitle());
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
 		try {
 			Thread.sleep(8000);
 		} catch (InterruptedException e) {
