@@ -17,11 +17,12 @@ public class DataProviders {
 		Test ta = testMethod.getAnnotation(Test.class);
 		Class<?> dpClass = getDPClass(testMethod);
 		Method dpMethod = getDPMethod(ta, dpClass);
-		
-		// only DPs in another class must be static - same class DPs can be instance methods.
+
+		// only DPs in another class must be static - same class DPs can be
+		// instance methods.
 		boolean dpIsStatic = Modifier.isStatic(dpMethod.getModifiers());
 		Object clazz = null;
-		if(!dpIsStatic) {
+		if (!dpIsStatic) {
 			try {
 				clazz = dpClass.newInstance();
 			} catch (InstantiationException e) {
@@ -107,7 +108,9 @@ public class DataProviders {
 
 	@DataProvider(name = "INJECT_WEBDRIVER")
 	public static Object[][] injectWebDriver() {
-		return new Object[][] { { new AdamantDriver() } };
+		// use "empty" 2D array so driver initialization is always done in a
+		// single place
+		return addWdInParams(new Object[1][0]);
 	}
 
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS", parallel = false)
@@ -123,13 +126,17 @@ public class DataProviders {
 	}
 
 	private static Object[][] addWdInParams(Object[][] oldParams) {
-		Object[][] params = oldParams;
 
+		// TODO: increase DP iterations for each browser being used in
+		// (currently non-existent) properties file
+
+		Object[][] params = oldParams;
 		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
 
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
 			Object[] row = new Object[params[0].length + 1];
+
 			row[0] = new AdamantDriver();
 			for (int j = 1; j < paramsWithWd[0].length; j++) {
 				row[j] = params[i][j - 1];

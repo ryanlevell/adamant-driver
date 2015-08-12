@@ -23,6 +23,7 @@ public class AdamantDriver implements WebDriver {
 
 	public WebDriver raw() {
 		if (driver == null) {
+			// TODO: support other drivers
 			driver = new FirefoxDriver();
 		}
 		return driver;
