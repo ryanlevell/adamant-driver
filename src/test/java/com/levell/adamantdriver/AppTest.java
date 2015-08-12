@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 
 import com.levell.adamantdriver.AdamantDriver;
 
-//TODO: test with other listeners
 //TODO: test with other WD classes (options, navigate, etc)
 public class AppTest {
 	@Test
@@ -22,15 +21,32 @@ public class AppTest {
 		// if it passes then good!
 	}
 
-	@Parameters("test!")
+	@Parameters("test!!!")
 	@Test
-	public void testNonDriverParam(@Optional("test!") String str) {
-		Assert.assertEquals(str, "test!");
+	public void testAnnotatedNonDriverParam(@Optional("test!!!") String str) {
+		Assert.assertEquals(str, "test!!!");
 	}
+
+	// Will fail everything - Don't know how to support @Parameters yet.
+	// @Parameters("test!!")
+	// @Test
+	// public void testDriverParamAndAnnotatedParam(AdamantDriver driver,
+	// @Optional("test!!") String str) {
+	// driver.get("http://google.com");
+	// Assert.assertEquals(driver.getTitle(), "Google");
+	// Assert.assertEquals(str, "test!!");
+	// }
 
 	@Test(dataProvider = "test")
 	public void testNonDriverDataProviderParam(String str) {
 		Assert.assertEquals(str, "test!");
+	}
+	
+	@Test(dataProvider = "test_non_static")
+	public void testDriverWithNonStaticDataProvider(AdamantDriver driver, String str) {
+		driver.get("http://google.com");
+		Assert.assertEquals(str, "test_non_static");
+		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test
@@ -118,6 +134,11 @@ public class AppTest {
 	@DataProvider(name = "test")
 	public static Object[][] provideTestParam() {
 		return new Object[][] { { "test!" } };
+	}
+	
+	@DataProvider(name = "test_non_static")
+	public Object[][] provideTestNonStaticMethodParam() {
+		return new Object[][] { { "test_non_static" } };
 	}
 
 	@DataProvider(name = "test_2_params")

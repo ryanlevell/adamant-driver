@@ -3,6 +3,7 @@ package com.levell.adamantdriver;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
@@ -16,24 +17,37 @@ public class DataProviders {
 		Test ta = testMethod.getAnnotation(Test.class);
 		Class<?> dpClass = getDPClass(testMethod);
 		Method dpMethod = getDPMethod(ta, dpClass);
+		
+		// only DPs in another class must be static - same class DPs can be instance methods.
+		boolean dpIsStatic = Modifier.isStatic(dpMethod.getModifiers());
+		Object clazz = null;
+		if(!dpIsStatic) {
+			try {
+				clazz = dpClass.newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 
 		Object[][] params = null;
 		try {
 			Class<?>[] types = dpMethod.getParameterTypes();
 			if (types.length == 2) {
 				if (types[0].isAssignableFrom(ITestContext.class)) {
-					params = (Object[][]) dpMethod.invoke(null, testContext, testMethod);
+					params = (Object[][]) dpMethod.invoke(clazz, testContext, testMethod);
 				} else {
-					params = (Object[][]) dpMethod.invoke(null, testMethod, testContext);
+					params = (Object[][]) dpMethod.invoke(clazz, testMethod, testContext);
 				}
 			} else if (types.length == 1) {
 				if (types[0].isAssignableFrom(ITestContext.class)) {
-					params = (Object[][]) dpMethod.invoke(null, testContext);
+					params = (Object[][]) dpMethod.invoke(clazz, testContext);
 				} else if (types[0].isAssignableFrom(Method.class)) {
-					params = (Object[][]) dpMethod.invoke(null, testMethod);
+					params = (Object[][]) dpMethod.invoke(clazz, testMethod);
 				}
 			} else {
-				params = (Object[][]) dpMethod.invoke(null);
+				params = (Object[][]) dpMethod.invoke(clazz);
 			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
@@ -49,7 +63,8 @@ public class DataProviders {
 		// get dp name and dp class
 		Class<?> dpClass = testMethod.getAnnotation(Test.class).dataProviderClass();
 
-		// #dataProviderClass() returns Object if not found so check for it explicitly
+		// #dataProviderClass() returns Object if not found so check for it
+		// explicitly
 		if (dpClass == null || dpClass == Object.class) {
 			// class is declaring class if no dp class attribute
 			dpClass = testMethod.getDeclaringClass();

@@ -8,6 +8,7 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 public class WebDriverListener implements IAnnotationTransformer, ITestListener {
@@ -16,9 +17,16 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
 
 		if (testMethod != null) {
+
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
 			if (paramTypes != null && 0 < paramTypes.length) {
 				if (paramTypes[0].isAssignableFrom(AdamantDriver.class)) {
+
+					// TODO: read testng.xml and @Optional params and create Data Provider out of it.
+					if (testMethod.getAnnotation(Parameters.class) != null) {
+						throw new IllegalStateException("@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
+					}
+
 					if (paramTypes.length == 1) {
 						annotation.setDataProviderClass(DataProviders.class);
 						annotation.setDataProvider("INJECT_WEBDRIVER");
@@ -44,7 +52,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 		Object param1 = result.getParameters()[0];
 		if (param1 instanceof AdamantDriver) {
 			AdamantDriver driver = (AdamantDriver) param1;
-			if(driver.isOpen()) {
+			if (driver.isOpen()) {
 				driver.quit();
 			}
 		}
