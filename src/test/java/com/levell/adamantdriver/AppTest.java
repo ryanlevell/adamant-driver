@@ -27,7 +27,7 @@ public class AppTest {
 		Assert.assertEquals(str, "test!!!");
 	}
 
-	// Will fail everything - Don't know how to support @Parameters yet.
+	// Will fail everything - Don't know how to support @Parameters yet when injecting a driver.
 	// @Parameters("test!!")
 	// @Test
 	// public void testDriverParamAndAnnotatedParam(AdamantDriver driver,

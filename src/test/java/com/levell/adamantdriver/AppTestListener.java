@@ -4,7 +4,6 @@ import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-//TODO: not working
 @Listeners(TestListener.class)
 public class AppTestListener {
 
