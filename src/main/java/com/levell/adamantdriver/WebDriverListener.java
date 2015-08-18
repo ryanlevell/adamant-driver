@@ -11,11 +11,19 @@ import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.levell.adamantdriver.AdamantConfig.Prop;
+
 public class WebDriverListener implements IAnnotationTransformer, ITestListener {
+	
+	// TODO: where to put?
+	// set static props
+	static {
+		System.setProperty("webdriver.chrome.driver", AdamantConfig.getValue(Prop.CHROME_PATH));
+	}
 
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
-
+		
 		if (testMethod != null) {
 
 			Class<?>[] paramTypes = testMethod.getParameterTypes();

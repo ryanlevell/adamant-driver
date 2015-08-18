@@ -6,13 +6,15 @@ import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * A wrapper around WebDriver. The only difference is when the driver is opened.
- * Unlike the normal WebDriver implementations, this does not open the browser on
- * initialization. This is needed to prevent tests that have many iterations via a
- * DataProvider from opening all WebDriver browsers for each iteration all at once.
+ * Unlike the normal WebDriver implementations, this does not open the browser
+ * on initialization. This is needed to prevent tests that have many iterations
+ * via a DataProvider from opening all WebDriver browsers for each iteration all
+ * at once.
  * 
  * @author ryan
  *
@@ -20,11 +22,24 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 public class AdamantDriver implements WebDriver {
 
 	private WebDriver driver;
+	private Browser browser;
+
+	public AdamantDriver(String browser) {
+		this.browser = Browser.valueOf(browser.toUpperCase());
+	}
 
 	public WebDriver raw() {
 		if (driver == null) {
-			// TODO: support other drivers
-			driver = new FirefoxDriver();
+			switch (browser) {
+			case FIREFOX:
+				driver = new FirefoxDriver();
+				break;
+			case CHROME:
+				driver = new ChromeDriver();
+				break;
+			default:
+				throw new IllegalStateException("[" + browser + "] is not a browser");
+			}
 		}
 		return driver;
 	}

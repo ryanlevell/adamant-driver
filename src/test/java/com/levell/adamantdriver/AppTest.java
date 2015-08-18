@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import com.levell.adamantdriver.AdamantDriver;
 
+//TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
 public class AppTest {
 	@Test

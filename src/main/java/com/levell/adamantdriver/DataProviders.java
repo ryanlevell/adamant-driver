@@ -9,6 +9,8 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.levell.adamantdriver.AdamantConfig.Prop;
+
 public class DataProviders {
 
 	public static Object[][] callDataProvider(ITestContext testContext, Method testMethod) {
@@ -127,23 +129,25 @@ public class DataProviders {
 
 	private static Object[][] addWdInParams(Object[][] oldParams) {
 
-		// TODO: increase DP iterations for each browser being used in
-		// (currently non-existent) properties file
+		String[] browsers = AdamantConfig.getValue(Prop.BROWSERS).toLowerCase().split("\\s*,\\s*");
 
 		Object[][] params = oldParams;
-		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
+		Object[][] paramsWithWd = new Object[params.length * browsers.length][params[0].length + 1];
 
+		int num = 0;
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
-			Object[] row = new Object[params[0].length + 1];
-
-			row[0] = new AdamantDriver();
-			for (int j = 1; j < paramsWithWd[0].length; j++) {
-				row[j] = params[i][j - 1];
+			
+			// each browser
+			for (int k = 0; k < browsers.length; k++) {
+				Object[] row = new Object[params[0].length + 1];
+				row[0] = new AdamantDriver(browsers[k]);
+				for (int j = 1; j < paramsWithWd[0].length; j++) {
+					row[j] = params[i][j - 1];
+				}
+				paramsWithWd[num++] = row;
 			}
-			paramsWithWd[i] = row;
 		}
-
 		return paramsWithWd;
 	}
 }
