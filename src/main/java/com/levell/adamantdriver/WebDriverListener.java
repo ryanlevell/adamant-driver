@@ -11,28 +11,28 @@ import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.levell.adamantdriver.AdamantConfig.Prop;
-
 public class WebDriverListener implements IAnnotationTransformer, ITestListener {
-	
+
 	// TODO: where to put?
 	// set static props
 	static {
-		System.setProperty("webdriver.chrome.driver", AdamantConfig.getValue(Prop.CHROME_PATH));
+		System.setProperty("webdriver.chrome.driver", AdamantConfig.getChromeDriverPath());
 	}
 
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
-		
+
 		if (testMethod != null) {
 
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
 			if (paramTypes != null && 0 < paramTypes.length) {
 				if (paramTypes[0].isAssignableFrom(AdamantDriver.class)) {
 
-					// TODO: read testng.xml and @Optional params and create Data Provider out of it.
+					// TODO: read testng.xml and @Optional params and create
+					// Data Provider out of it.
 					if (testMethod.getAnnotation(Parameters.class) != null) {
-						throw new IllegalStateException("@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
+						throw new IllegalStateException(
+								"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
 					}
 
 					if (paramTypes.length == 1) {

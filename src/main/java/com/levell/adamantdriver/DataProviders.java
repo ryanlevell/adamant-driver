@@ -4,12 +4,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.levell.adamantdriver.AdamantConfig.Prop;
 
 public class DataProviders {
 
@@ -129,19 +129,19 @@ public class DataProviders {
 
 	private static Object[][] addWdInParams(Object[][] oldParams) {
 
-		String[] browsers = AdamantConfig.getValue(Prop.BROWSERS).toLowerCase().split("\\s*,\\s*");
+		List<String> browsers = AdamantConfig.getBrowsers();
 
 		Object[][] params = oldParams;
-		Object[][] paramsWithWd = new Object[params.length * browsers.length][params[0].length + 1];
+		Object[][] paramsWithWd = new Object[params.length * browsers.size()][params[0].length + 1];
 
 		int num = 0;
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
-			
+
 			// each browser
-			for (int k = 0; k < browsers.length; k++) {
+			for (int k = 0; k < browsers.size(); k++) {
 				Object[] row = new Object[params[0].length + 1];
-				row[0] = new AdamantDriver(browsers[k]);
+				row[0] = new AdamantDriver(browsers.get(k));
 				for (int j = 1; j < paramsWithWd[0].length; j++) {
 					row[j] = params[i][j - 1];
 				}

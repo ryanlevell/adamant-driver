@@ -28,7 +28,8 @@ public class AppTest {
 		Assert.assertEquals(str, "test!!!");
 	}
 
-	// Will fail everything - Don't know how to support @Parameters yet when injecting a driver.
+	// Will fail everything - Don't know how to support @Parameters yet when
+	// injecting a driver.
 	// @Parameters("test!!")
 	// @Test
 	// public void testDriverParamAndAnnotatedParam(AdamantDriver driver,
@@ -42,7 +43,7 @@ public class AppTest {
 	public void testNonDriverDataProviderParam(String str) {
 		Assert.assertEquals(str, "test!");
 	}
-	
+
 	@Test(dataProvider = "test_non_static")
 	public void testDriverWithNonStaticDataProvider(AdamantDriver driver, String str) {
 		driver.get("http://google.com");
@@ -55,6 +56,20 @@ public class AppTest {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
+
+	// sys prop must be set manually to firefox before test to run this test
+	// @Test
+	// public void testDriverSystemProperty(AdamantDriver driver) {
+	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
+	// }
+
+	// must delete/rename props file to run this test
+	// @Test
+	// public void testNoPropertiesFile(AdamantDriver driver) {
+	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
+	// }
+
+	// TODO: test multiple browsers in sys prop/prop file
 
 	@Test(dataProvider = "test")
 	public void testDriverAndDataProviderParam(AdamantDriver driver, String str) {
@@ -136,7 +151,7 @@ public class AppTest {
 	public static Object[][] provideTestParam() {
 		return new Object[][] { { "test!" } };
 	}
-	
+
 	@DataProvider(name = "test_non_static")
 	public Object[][] provideTestNonStaticMethodParam() {
 		return new Object[][] { { "test_non_static" } };
