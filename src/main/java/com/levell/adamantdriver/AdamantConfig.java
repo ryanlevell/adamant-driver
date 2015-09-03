@@ -9,6 +9,11 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Configuration for the AdamantDriver features.
+ * @author ryan
+ *
+ */
 class AdamantConfig {
 
 	private static final Properties PROPS = new Properties();
@@ -19,6 +24,10 @@ class AdamantConfig {
 	// TODO change depending on user & OS
 	private static final String DEFAULT_CHROME_PATH = "/Users/ryan/drivers/chromedriver";
 
+	/**
+	 * Get the single instance of the Properties.
+	 * @return The Properties object.
+	 */
 	private static Properties props() {
 
 		if (PROPS.isEmpty()) {
@@ -36,6 +45,11 @@ class AdamantConfig {
 		return PROPS;
 	}
 
+	/**
+	 * Get a config value. It checks system properties first, then the properties file.
+	 * @param p The property to find.
+	 * @return The property value or the default or null.
+	 */
 	private static String getValue(Prop p) {
 		// sys prop overrides prop file
 		String value = System.getProperty(p.name().toLowerCase());
@@ -48,6 +62,10 @@ class AdamantConfig {
 		return value;
 	}
 
+	/**
+	 * Get the chrome driver path property.
+	 * @return The path. Defaults to {@link #DEFAULT_CHROME_PATH}.
+	 */
 	public static String getChromeDriverPath() {
 		String path = getValue(Prop.CHROME_PATH);
 		if (path == null) {
@@ -56,6 +74,10 @@ class AdamantConfig {
 		return path;
 	}
 
+	/**
+	 * Get the browser(s) property.
+	 * @return The browser(s). Defaults to {@link #DEFAULT_BROWSERS}.
+	 */
 	public static List<String> getBrowsers() {
 
 		String browserStr = getValue(Prop.BROWSERS);
@@ -68,6 +90,11 @@ class AdamantConfig {
 		return Arrays.asList(browserStr.split("\\s*,\\s"));
 	}
 
+	/**
+	 * Supported properties.
+	 * @author ryan
+	 *
+	 */
 	private enum Prop {
 		BROWSERS, CHROME_PATH
 	}

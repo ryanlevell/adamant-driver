@@ -22,6 +22,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
 
+		// make sure transform is acting on a method and not class/constructor
 		if (testMethod != null) {
 
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
@@ -35,6 +36,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 								"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
 					}
 
+					// determine if we need to inject the old data provider
 					if (paramTypes.length == 1) {
 						annotation.setDataProviderClass(DataProviders.class);
 						annotation.setDataProvider("INJECT_WEBDRIVER");
@@ -53,6 +55,10 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 		}
 	}
 
+	/**
+	 * Closes the AdamantDriver via the test parameters.
+	 * @param result The test result object.
+	 */
 	private static void closeWebDriver(ITestResult result) {
 		if (result.getParameters() == null || result.getParameters().length == 0) {
 			return;

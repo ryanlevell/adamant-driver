@@ -10,9 +10,19 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-
+/**
+ * Contains the data providers that will override all original data providers and the util methods to make that happen.
+ * @author ryan
+ *
+ */
 public class DataProviders {
 
+	/**
+	 * Calls the original data provider method.
+	 * @param testContext One of the possible params injected by TestNG.
+	 * @param testMethod One of the possible params injected by TestNG.
+	 * @return The original 2D array of data.
+	 */
 	public static Object[][] callDataProvider(ITestContext testContext, Method testMethod) {
 
 		// get dp class and method
@@ -37,6 +47,8 @@ public class DataProviders {
 		Object[][] params = null;
 		try {
 			Class<?>[] types = dpMethod.getParameterTypes();
+			
+			// check all possible combinations of possibly injected params to make the call via reflection
 			if (types.length == 2) {
 				if (types[0].isAssignableFrom(ITestContext.class)) {
 					params = (Object[][]) dpMethod.invoke(clazz, testContext, testMethod);
@@ -62,8 +74,15 @@ public class DataProviders {
 		return params;
 	}
 
+	/**
+	 * Gets the {@link DataProvider} class. It first checks the test annotation dataProviderClass attribute.<br>
+	 * If the attribute is missing, the data provider must be declared in the same class.
+	 * @param testMethod The test method of which we are trying to find the data provider.
+	 * @return The data provider class.
+	 */
+	// TODO: add a test when the DP is in a parent class - I think this will break this method.
 	public static Class<?> getDPClass(Method testMethod) {
-		// get dp name and dp class
+		// get dp class
 		Class<?> dpClass = testMethod.getAnnotation(Test.class).dataProviderClass();
 
 		// #dataProviderClass() returns Object if not found so check for it
@@ -75,6 +94,11 @@ public class DataProviders {
 		return dpClass;
 	}
 
+	/**
+	 * Determine if the test method has the parallel attribute set.
+	 * @param m The test method.
+	 * @return Whether the test will be ran in parallel.
+	 */
 	public static boolean isParallel(Method m) {
 		// get annotations for each method in dp class
 		for (Annotation a : m.getAnnotations()) {
@@ -86,6 +110,12 @@ public class DataProviders {
 		return false;
 	}
 
+	/**
+	 * Gets the {@link DataProvider} method.
+	 * @param testAnnotation The annotation of method.
+	 * @param dpClass The class that contains the data provider method.
+	 * @return The data provider method.
+	 */
 	public static Method getDPMethod(Test testAnnotation, Class<?> dpClass) {
 
 		String dpName = testAnnotation.dataProvider();
@@ -108,6 +138,10 @@ public class DataProviders {
 				+ "]. Check that the DataProvider name and DataProvider class are correct.");
 	}
 
+	/**
+	 * The data provider that is used when none is specified and AdamantDriver is the only test parameter.
+	 * @return The 2D containing only the AdamantDriver object(s).
+	 */
 	@DataProvider(name = "INJECT_WEBDRIVER")
 	public static Object[][] injectWebDriver() {
 		// use "empty" 2D array so driver initialization is always done in a
@@ -115,18 +149,35 @@ public class DataProviders {
 		return addWdInParams(new Object[1][0]);
 	}
 
+	/**
+	 * The data provider that is used when there is already a data provider and AdamantDriver is the first parameter.
+	 * @param context The injected context.
+	 * @param method The inject method.
+	 * @return The 2D array of the original data with the AdamantDriver object inserted at the beginning.
+	 */
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS", parallel = false)
 	public static Object[][] injectWebDriverWithParams(ITestContext context, Method method) {
 		Object[][] params = callDataProvider(context, method);
 		return addWdInParams(params);
 	}
 
+	/**
+	 * Parallel version of {@link #injectWebDriverWithParams(ITestContext, Method)}.
+	 * @param context The injected context.
+	 * @param method The injected method.
+	 * @return The 2D array of the original data with the AdamantDriver object inserted at the beginning.
+	 */
 	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL", parallel = true)
 	public static Object[][] injectWebDriverWithParamsParallel(ITestContext context, Method method) {
 		Object[][] params = callDataProvider(context, method);
 		return addWdInParams(params);
 	}
 
+	/**
+	 * Adds the AdamantDriver object to the beginning of the original data provider array.
+	 * @param oldParams The original data provider array.
+	 * @return The new array with the AdamantDriver object inserted at at the beginning.
+	 */
 	private static Object[][] addWdInParams(Object[][] oldParams) {
 
 		List<String> browsers = AdamantConfig.getBrowsers();

@@ -28,6 +28,10 @@ public class AdamantDriver implements WebDriver {
 		this.browser = Browser.valueOf(browser.toUpperCase());
 	}
 
+	/**
+	 * Gets the original {@link WebDriver}.
+	 * @return The WebDriver object.
+	 */
 	public WebDriver raw() {
 		if (driver == null) {
 			switch (browser) {
@@ -44,26 +48,45 @@ public class AdamantDriver implements WebDriver {
 		return driver;
 	}
 
+	/**
+	 * Determines if the driver has been "opened" or initialized.
+	 * @return Whether the driver has been opened yet.
+	 */
 	public boolean isOpen() {
 		return driver != null;
 	}
 
+	/**
+	 * @see WebDriver#quit().
+	 */
 	public void quit() {
 		raw().quit();
 	}
 
+	/**
+	 * @see WebDriver#close().
+	 */
 	public void close() {
 		raw().close();
 	}
 
+	/**
+	 * @see WebDriver#findElement(By).
+	 */
 	public WebElement findElement(By arg0) {
 		return raw().findElement(arg0);
 	}
 
+	/**
+	 * @see WebDriver#findElements(By).
+	 */
 	public List<WebElement> findElements(By arg0) {
 		return raw().findElements(arg0);
 	}
 
+	/**
+	 * @see WebDriver#get(String).
+	 */
 	public void get(String arg0) {
 		raw().get(arg0);
 	}
@@ -72,30 +95,51 @@ public class AdamantDriver implements WebDriver {
 		return raw().getCurrentUrl();
 	}
 
+	/**
+	 * @see WebDriver#getPageSource().
+	 */
 	public String getPageSource() {
 		return raw().getPageSource();
 	}
 
+	/**
+	 * @see WebDriver#getTitle().
+	 */
 	public String getTitle() {
 		return raw().getTitle();
 	}
 
+	/**
+	 * @see WebDriver#getWindowHandle().
+	 */
 	public String getWindowHandle() {
 		return raw().getWindowHandle();
 	}
 
+	/**
+	 * @see WebDriver#getWindowHandles().
+	 */
 	public Set<String> getWindowHandles() {
 		return raw().getWindowHandles();
 	}
 
+	/**
+	 * @see WebDriver#manage().
+	 */
 	public Options manage() {
 		return raw().manage();
 	}
 
+	/**
+	 * @see WebDriver#navigate().
+	 */
 	public Navigation navigate() {
 		return raw().navigate();
 	}
 
+	/**
+	 * @see WebDriver#switchTo().
+	 */
 	public TargetLocator switchTo() {
 		return raw().switchTo();
 	}
