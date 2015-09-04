@@ -16,7 +16,7 @@ import com.levell.adamantdriver.AdamantDriver;
 
 //TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
-public class AppTest {
+public class AppTest extends AppTestParent {
 	@Test
 	public void testNoParams() {
 		// if it passes then good!
@@ -83,6 +83,13 @@ public class AppTest {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test!");
+	}
+	
+	@Test(dataProvider = "parent_test")
+	public void testDriverAndParentClassDataProviderParam(AdamantDriver driver, String str) {
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
+		Assert.assertEquals(str, "test_parent_class!");
 	}
 
 	@Test(dataProvider = "test", dataProviderClass = AppTestDataProviders.class)

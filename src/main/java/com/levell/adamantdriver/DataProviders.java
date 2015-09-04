@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.ITestContext;
@@ -88,7 +90,7 @@ public class DataProviders {
 		// #dataProviderClass() returns Object if not found so check for it
 		// explicitly
 		if (dpClass == null || dpClass == Object.class) {
-			// class is declaring class if no dp class attribute
+			// class is declaring class (or a super class) if no dp class attribute
 			dpClass = testMethod.getDeclaringClass();
 		}
 		return dpClass;
@@ -119,9 +121,18 @@ public class DataProviders {
 	public static Method getDPMethod(Test testAnnotation, Class<?> dpClass) {
 
 		String dpName = testAnnotation.dataProvider();
+		
+		List<Method> classMethods = new ArrayList<Method>();
+		classMethods.addAll(Arrays.asList(dpClass.getMethods()));
+		
+		// look into all super class's methods as well
+		Class<?> superClass = dpClass.getSuperclass();
+		while(superClass != null) {
+			classMethods.addAll(Arrays.asList(superClass.getMethods()));
+			superClass = superClass.getSuperclass();
+		}
 
 		// get all method in the dp class
-		Method[] classMethods = dpClass.getMethods();
 		for (Method m : classMethods) {
 			// get annotations for each method in dp class
 			for (Annotation a : m.getAnnotations()) {
@@ -134,6 +145,7 @@ public class DataProviders {
 				}
 			}
 		}
+		
 		throw new IllegalStateException("Data Provider not found with name [" + dpName + "] in class [" + dpClass
 				+ "]. Check that the DataProvider name and DataProvider class are correct.");
 	}
