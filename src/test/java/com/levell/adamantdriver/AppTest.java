@@ -91,6 +91,13 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_parent_class!");
 	}
+	
+	@Test(dataProvider = "parent_test_static")
+	public void testDriverAndStaticParentClassDataProviderParam(AdamantDriver driver, String str) {
+		driver.get("http://google.com");
+		Assert.assertEquals(driver.getTitle(), "Google");
+		Assert.assertEquals(str, "test_parent_class_static!");
+	}
 
 	@Test(dataProvider = "test", dataProviderClass = AppTestDataProviders.class)
 	public void testDriverAndDifferentClassDataProviderParam(AdamantDriver driver, String str) {
