@@ -19,7 +19,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  * @author ryan
  *
  */
-public class AdamantDriver implements WebDriver {
+class AdamantDriver implements WebDriver {
 
 	private WebDriver driver;
 	private Browser browser;

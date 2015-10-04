@@ -3,6 +3,7 @@ package com.levell.adamantdriver;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.IAnnotationTransformer;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -27,7 +28,7 @@ public class WebDriverListener implements IAnnotationTransformer, ITestListener 
 
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
 			if (paramTypes != null && 0 < paramTypes.length) {
-				if (paramTypes[0].isAssignableFrom(AdamantDriver.class)) {
+				if (paramTypes[0].isAssignableFrom(WebDriver.class)) {
 
 					// TODO: read testng.xml and @Optional params and create
 					// Data Provider out of it.

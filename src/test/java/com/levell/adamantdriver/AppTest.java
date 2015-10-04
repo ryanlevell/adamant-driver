@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
@@ -12,7 +13,6 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.levell.adamantdriver.AdamantDriver;
 
 //TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
@@ -32,7 +32,7 @@ public class AppTest extends AppTestParent {
 	// injecting a driver.
 	// @Parameters("test!!")
 	// @Test
-	// public void testDriverParamAndAnnotatedParam(AdamantDriver driver,
+	// public void testDriverParamAndAnnotatedParam(WebDriver driver,
 	// @Optional("test!!") String str) {
 	// driver.get("http://google.com");
 	// Assert.assertEquals(driver.getTitle(), "Google");
@@ -45,83 +45,83 @@ public class AppTest extends AppTestParent {
 	}
 
 	@Test(dataProvider = "test_non_static")
-	public void testDriverWithNonStaticDataProvider(AdamantDriver driver, String str) {
+	public void testDriverWithNonStaticDataProvider(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(str, "test_non_static");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test
-	public void testDriverParam(AdamantDriver driver) {
+	public void testDriverParam(WebDriver driver) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	// sys prop must be set manually to firefox before test to run this test
 	// @Test
-	// public void testDriverSystemProperty(AdamantDriver driver) {
+	// public void testDriverSystemProperty(WebDriver driver) {
 	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
 	// }
 
 	// must delete/rename props file to run this test
 	// @Test
-	// public void testNoPropertiesFile(AdamantDriver driver) {
+	// public void testNoPropertiesFile(WebDriver driver) {
 	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
 	// }
 
 	// TODO: test multiple browsers in sys prop/prop file
 
 	@Test(dataProvider = "test")
-	public void testDriverAndDataProviderParam(AdamantDriver driver, String str) {
+	public void testDriverAndDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test!");
 	}
 
 	@Test(dataProvider = "test")
-	public void testDriverAndDataProviderParamAgain(AdamantDriver driver, String str) {
+	public void testDriverAndDataProviderParamAgain(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test!");
 	}
 	
 	@Test(dataProvider = "parent_test")
-	public void testDriverAndParentClassDataProviderParam(AdamantDriver driver, String str) {
+	public void testDriverAndParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_parent_class!");
 	}
 	
 	@Test(dataProvider = "parent_test_static")
-	public void testDriverAndStaticParentClassDataProviderParam(AdamantDriver driver, String str) {
+	public void testDriverAndStaticParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_parent_class_static!");
 	}
 
 	@Test(dataProvider = "test", dataProviderClass = AppTestDataProviders.class)
-	public void testDriverAndDifferentClassDataProviderParam(AdamantDriver driver, String str) {
+	public void testDriverAndDifferentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_different_class!");
 	}
 
 	@Test(dataProvider = "inject_method")
-	public void testDriverAndDataProviderWithMethod(AdamantDriver driver, Method m) {
+	public void testDriverAndDataProviderWithMethod(WebDriver driver, Method m) {
 		Assert.assertNotNull(m);
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "inject_context")
-	public void testDriverAndDataProviderWithContext(AdamantDriver driver, ITestContext c) {
+	public void testDriverAndDataProviderWithContext(WebDriver driver, ITestContext c) {
 		Assert.assertNotNull(c);
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
 	@Test(dataProvider = "inject_method_context")
-	public void testDriverAndDataProviderWithMethodAndContext(AdamantDriver driver, Method m, ITestContext c) {
+	public void testDriverAndDataProviderWithMethodAndContext(WebDriver driver, Method m, ITestContext c) {
 		Assert.assertNotNull(m);
 		Assert.assertNotNull(c);
 		driver.get("http://google.com");
@@ -129,7 +129,7 @@ public class AppTest extends AppTestParent {
 	}
 
 	@Test(dataProvider = "inject_context_method")
-	public void testDriverAndDataProviderWithContextAndMethod(AdamantDriver driver, ITestContext c, Method m) {
+	public void testDriverAndDataProviderWithContextAndMethod(WebDriver driver, ITestContext c, Method m) {
 		Assert.assertNotNull(c);
 		Assert.assertNotNull(m);
 		driver.get("http://google.com");
@@ -139,7 +139,7 @@ public class AppTest extends AppTestParent {
 	private static int pos = 0;
 
 	@Test(dataProvider = "test_2_params")
-	public void testDriverAndTwoDataProviderParams(AdamantDriver driver, String str, String str2) {
+	public void testDriverAndTwoDataProviderParams(WebDriver driver, String str, String str2) {
 		Assert.assertEquals(str, "with_wd2_" + pos + pos++);
 		Assert.assertEquals(str2, "with_wd2_" + pos + pos++);
 		driver.get("http://google.com");
@@ -150,7 +150,7 @@ public class AppTest extends AppTestParent {
 			"parallel_3", "parallel_4", "parallel_5", "parallel_6", "parallel_7", "parallel_8", "parallel_9"));
 
 	@Test(dataProvider = "parallel")
-	public void testParallelDataProviderTests(AdamantDriver driver, String str) {
+	public void testParallelDataProviderTests(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		try {

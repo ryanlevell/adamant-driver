@@ -1,5 +1,6 @@
 package com.levell.adamantdriver;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -8,7 +9,7 @@ import org.testng.annotations.Test;
 public class AppTestListener {
 
 	@Test
-	public void testTestListener(AdamantDriver driver) {
+	public void testTestListener(WebDriver driver) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "FAIL (But pass via listener)");
 	}
