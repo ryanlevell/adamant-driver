@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
 	<listeners>
-		<listener class-name="com.levell.adamantdriver.WebDriverListener" />
+		<listener class-name="com.levell.adamantdriver.AdamantListener" />
 	</listeners>
 	<test name="Test">
 		<classes>

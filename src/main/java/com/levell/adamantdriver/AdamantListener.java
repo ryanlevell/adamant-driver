@@ -12,7 +12,7 @@ import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-public class WebDriverListener implements IAnnotationTransformer, ITestListener {
+public class AdamantListener implements IAnnotationTransformer, ITestListener {
 
 	// TODO: where to put?
 	// set static props

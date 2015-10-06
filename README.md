@@ -1,10 +1,10 @@
 # adamant-driver
 
-AdamantDriver is a library for Selenium WebDriver + TestNG. It handles initializing and closing WebDriver using a TestNG listener. The user just needs to include an AdamantDriver parameter in their TestNG test:
+AdamantDriver is a library for Selenium WebDriver + TestNG. It handles initializing and closing WebDriver using a TestNG listener. The user just needs to include an WebDriver parameter in their TestNG test:
 
 ```JAVA
 @Test
-public void test(AdamantDriver driver) {
+public void test(WebDriver driver) {
     // the driver is initialized and ready to use
     driver.get("http://google.com");
     Assert.assertEquals(driver.getTitle(), "Google");
@@ -17,7 +17,7 @@ There is no need for a DataProvider or any other code to start using the driver 
 ```XML
 <suite name="SomeSuite">
 	<listeners>
-		<listener class-name="com.levell.adamantdriver.WebDriverListener" />
+		<listener class-name="com.levell.adamantdriver.AdamantListener" />
 	</listeners>
 	...
 </suite>
@@ -29,7 +29,7 @@ Although a DataProvider is not needed, DataProviders can be used normally and th
 
 ```JAVA
 @Test(dataProvider="someDataProvider")
-public void test(AdamantDriver driver, String dataProviderParam1, String dataProviderParam2) {
+public void test(WebDriver driver, String dataProviderParam1, String dataProviderParam2) {
     driver.get(dataProviderParam1);
     Assert.assertEquals(driver.getTitle(), dataProviderParam2);
 }
