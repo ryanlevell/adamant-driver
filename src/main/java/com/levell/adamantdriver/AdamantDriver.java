@@ -42,7 +42,7 @@ class AdamantDriver implements WebDriver {
 				driver = new ChromeDriver();
 				break;
 			default:
-				throw new IllegalStateException("[" + browser + "] is not a browser");
+				throw new IllegalStateException("[" + browser + "] is not a supported browser");
 			}
 		}
 		return driver;
@@ -57,35 +57,35 @@ class AdamantDriver implements WebDriver {
 	}
 
 	/**
-	 * @see WebDriver#quit().
+	 * {@inheritDoc}
 	 */
 	public void quit() {
 		raw().quit();
 	}
 
 	/**
-	 * @see WebDriver#close().
+	 * {@inheritDoc}
 	 */
 	public void close() {
 		raw().close();
 	}
 
 	/**
-	 * @see WebDriver#findElement(By).
+	 * {@inheritDoc}
 	 */
 	public WebElement findElement(By arg0) {
 		return raw().findElement(arg0);
 	}
 
 	/**
-	 * @see WebDriver#findElements(By).
+	 *{@inheritDoc}
 	 */
 	public List<WebElement> findElements(By arg0) {
 		return raw().findElements(arg0);
 	}
 
 	/**
-	 * @see WebDriver#get(String).
+	 * {@inheritDoc}
 	 */
 	public void get(String arg0) {
 		raw().get(arg0);
@@ -96,51 +96,55 @@ class AdamantDriver implements WebDriver {
 	}
 
 	/**
-	 * @see WebDriver#getPageSource().
+	 * {@inheritDoc}
 	 */
 	public String getPageSource() {
 		return raw().getPageSource();
 	}
 
 	/**
-	 * @see WebDriver#getTitle().
+	 * {@inheritDoc}
 	 */
 	public String getTitle() {
 		return raw().getTitle();
 	}
 
 	/**
-	 * @see WebDriver#getWindowHandle().
+	 * {@inheritDoc}
 	 */
 	public String getWindowHandle() {
 		return raw().getWindowHandle();
 	}
 
 	/**
-	 * @see WebDriver#getWindowHandles().
+	 * {@inheritDoc}
 	 */
 	public Set<String> getWindowHandles() {
 		return raw().getWindowHandles();
 	}
 
 	/**
-	 * @see WebDriver#manage().
+	 * {@inheritDoc}
 	 */
 	public Options manage() {
 		return raw().manage();
 	}
 
 	/**
-	 * @see WebDriver#navigate().
+	 * {@inheritDoc}
 	 */
 	public Navigation navigate() {
 		return raw().navigate();
 	}
 
 	/**
-	 * @see WebDriver#switchTo().
+	 * {@inheritDoc}
 	 */
 	public TargetLocator switchTo() {
 		return raw().switchTo();
+	}
+	
+	public String toString() {
+		return this.getClass().getSimpleName() + "{browser=" + browser+"}";
 	}
 }

@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.IAnnotationTransformer;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
@@ -13,6 +15,8 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 public class AdamantListener implements IAnnotationTransformer, ITestListener {
+
+	Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
 
 	// TODO: where to put?
 	// set static props
@@ -30,8 +34,6 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener {
 			if (paramTypes != null && 0 < paramTypes.length) {
 				if (paramTypes[0].isAssignableFrom(WebDriver.class)) {
 
-					// TODO: read testng.xml and @Optional params and create
-					// Data Provider out of it.
 					if (testMethod.getAnnotation(Parameters.class) != null) {
 						throw new IllegalStateException(
 								"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
@@ -58,7 +60,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener {
 
 	/**
 	 * Closes the AdamantDriver via the test parameters.
-	 * @param result The test result object.
+	 * 
+	 * @param result
+	 *            The test result object.
 	 */
 	private static void closeWebDriver(ITestResult result) {
 		if (result.getParameters() == null || result.getParameters().length == 0) {

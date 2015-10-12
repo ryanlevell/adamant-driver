@@ -154,7 +154,7 @@ public class AppTest extends AppTestParent {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(4000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
