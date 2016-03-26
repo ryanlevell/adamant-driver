@@ -45,7 +45,10 @@ Only FirefoxDriver can be used. All drivers will be supported soon.
 
 
 TODO Features:
-Config file
+Browser Capabilities
+Grid Support
+Proxy Support
+
 Screenshots
 Any browser - maven depenencies in mvn
 ...

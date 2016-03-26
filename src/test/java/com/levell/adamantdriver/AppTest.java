@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 
 //TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
@@ -84,14 +87,14 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test!");
 	}
-	
+
 	@Test(dataProvider = "parent_test")
 	public void testDriverAndParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_parent_class!");
 	}
-	
+
 	@Test(dataProvider = "parent_test_static")
 	public void testDriverAndStaticParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
@@ -159,6 +162,14 @@ public class AppTest extends AppTestParent {
 			e.printStackTrace();
 		}
 		Assert.assertTrue(values.remove(str));
+	}
+
+	@Test
+	public void testCapabilties(WebDriver driver) {
+		driver.get("http://google.com");
+		DesiredCapabilities caps = (DesiredCapabilities) ((RemoteWebDriver) ((AdamantDriver) driver).raw()).getCapabilities();
+		System.out.println(caps);
+		System.out.println(caps.getCapability(CapabilityType.ACCEPT_SSL_CERTS));
 	}
 
 	@DataProvider(name = "test")

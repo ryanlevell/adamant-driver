@@ -8,6 +8,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * A wrapper around WebDriver. The only difference is when the driver is opened.
@@ -30,16 +33,19 @@ class AdamantDriver implements WebDriver {
 
 	/**
 	 * Gets the original {@link WebDriver}.
+	 * 
 	 * @return The WebDriver object.
 	 */
 	public WebDriver raw() {
 		if (driver == null) {
 			switch (browser) {
 			case FIREFOX:
-				driver = new FirefoxDriver();
+				driver = new FirefoxDriver(AdamantConfig.getCaps(browser));
 				break;
 			case CHROME:
-				driver = new ChromeDriver();
+				driver = new ChromeDriver(AdamantConfig.getCaps(browser));
+				DesiredCapabilities caps = (DesiredCapabilities) ((RemoteWebDriver) driver).getCapabilities();
+				System.out.println(caps.getCapability(CapabilityType.ACCEPT_SSL_CERTS));
 				break;
 			default:
 				throw new IllegalStateException("[" + browser + "] is not a supported browser");
@@ -50,6 +56,7 @@ class AdamantDriver implements WebDriver {
 
 	/**
 	 * Determines if the driver has been "opened" or initialized.
+	 * 
 	 * @return Whether the driver has been opened yet.
 	 */
 	public boolean isOpen() {
@@ -78,7 +85,7 @@ class AdamantDriver implements WebDriver {
 	}
 
 	/**
-	 *{@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	public List<WebElement> findElements(By arg0) {
 		return raw().findElements(arg0);
@@ -143,8 +150,8 @@ class AdamantDriver implements WebDriver {
 	public TargetLocator switchTo() {
 		return raw().switchTo();
 	}
-	
+
 	public String toString() {
-		return this.getClass().getSimpleName() + "{browser=" + browser+"}";
+		return this.getClass().getSimpleName() + "{browser=" + browser + "}";
 	}
 }

@@ -3,9 +3,14 @@ package com.levell.adamantdriver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,10 +99,46 @@ class AdamantConfig {
 
 		// default firefox (easy to use - no props needed)
 		if (browserStr == null) {
-			LOG.info("Using default browser [firefox]");
+			LOG.info("Using default browser [" + DEFAULT_BROWSERS + "]");
 			browserStr = DEFAULT_BROWSERS;
 		}
 		return Arrays.asList(browserStr.split("\\s*,\\s"));
+	}
+
+	public static DesiredCapabilities getCaps(Browser b) {
+		DesiredCapabilities caps = null;
+		switch (b) {
+		case CHROME:
+			caps = DesiredCapabilities.chrome();
+			break;
+		case FIREFOX:
+			caps = DesiredCapabilities.firefox();
+			break;
+		default:
+			break;
+		}
+
+		Map<String, Object> capMap = getCapMap(b);
+		System.out.println(capMap);
+		for (Map.Entry<String, Object> entry : capMap.entrySet()) {
+			caps.setCapability(entry.getKey(), entry.getValue());
+		}
+
+		return caps;
+	}
+
+	private static Map<String, Object> getCapMap(Browser b) {
+		Map<String, Object> forBrowser = new HashMap<String, Object>();
+		String find = b.name().toLowerCase() + ".cap";
+		for (Entry<Object, Object> e : props().entrySet()) {
+			if (e.getKey().toString().startsWith(find)) {
+
+				// remove "browser.cap." piece of String
+				String key = e.getKey().toString().replace(find + ".", "");
+				forBrowser.put(key, e.getValue());
+			}
+		}
+		return forBrowser;
 	}
 
 	/**
