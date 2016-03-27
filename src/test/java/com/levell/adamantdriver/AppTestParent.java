@@ -2,7 +2,7 @@ package com.levell.adamantdriver;
 
 import org.testng.annotations.DataProvider;
 
-public class AppTestParent {
+public abstract class AppTestParent {
 	
 	@DataProvider(name = "parent_test_static")
 	public static Object[][] provideTestParamParentStatic() {

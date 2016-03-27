@@ -1,4 +1,4 @@
-package com.levell.adamantdriver;
+package com.levell.adamantdriver.dataprovider;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -12,25 +12,31 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.levell.adamantdriver.AdamantDriver;
+import com.levell.adamantdriver.config.AdamantConfig;
+import com.levell.adamantdriver.config.Browser;
+
 /**
- * Contains the data providers that will override all original data providers and the util methods to make that happen.
+ * Contains the data provider util methods.
+ * 
  * @author ryan
  *
  */
-public class DataProviders {
+public class DataProviderUtil {
 
 	/**
 	 * Calls the original data provider method.
-	 * @param testContext One of the possible params injected by TestNG.
-	 * @param testMethod One of the possible params injected by TestNG.
+	 * 
+	 * @param testContext
+	 *            One of the possible params injected by TestNG.
+	 * @param testMethod
+	 *            One of the possible params injected by TestNG.
 	 * @return The original 2D array of data.
 	 */
 	public static Object[][] callDataProvider(ITestContext testContext, Method testMethod) {
 
-		// get dp class and method
-		Test ta = testMethod.getAnnotation(Test.class);
 		Class<?> dpClass = getDPClass(testMethod);
-		Method dpMethod = getDPMethod(ta, dpClass);
+		Method dpMethod = getDPMethod(testMethod);
 
 		// only DPs in another class must be static - same class DPs can be
 		// instance methods.
@@ -38,6 +44,7 @@ public class DataProviders {
 		Object clazz = null;
 		if (!dpIsStatic) {
 			try {
+				// can't use dpMethod.getDeclaringClass(), method could be in abstract parent class
 				clazz = dpClass.newInstance();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -49,8 +56,9 @@ public class DataProviders {
 		Object[][] params = null;
 		try {
 			Class<?>[] types = dpMethod.getParameterTypes();
-			
-			// check all possible combinations of possibly injected params to make the call via reflection
+
+			// check all possible combinations of possibly injected params to
+			// make the call via reflection
 			if (types.length == 2) {
 				if (types[0].isAssignableFrom(ITestContext.class)) {
 					params = (Object[][]) dpMethod.invoke(clazz, testContext, testMethod);
@@ -77,20 +85,25 @@ public class DataProviders {
 	}
 
 	/**
-	 * Gets the {@link DataProvider} class. It first checks the test annotation dataProviderClass attribute.<br>
-	 * If the attribute is missing, the data provider must be declared in the same class.
-	 * @param testMethod The test method of which we are trying to find the data provider.
+	 * Gets the {@link DataProvider} class. It first checks the test annotation
+	 * dataProviderClass attribute.<br>
+	 * If the attribute is missing, the data provider must be declared in the
+	 * same class.
+	 * 
+	 * @param testMethod
+	 *            The test method of which we are trying to find the data
+	 *            provider.
 	 * @return The data provider class.
 	 */
-	// TODO: add a test when the DP is in a parent class - I think this will break this method.
-	public static Class<?> getDPClass(Method testMethod) {
+	private static Class<?> getDPClass(Method testMethod) {
 		// get dp class
 		Class<?> dpClass = testMethod.getAnnotation(Test.class).dataProviderClass();
 
 		// #dataProviderClass() returns Object if not found so check for it
 		// explicitly
 		if (dpClass == null || dpClass == Object.class) {
-			// class is declaring class (or a super class) if no dp class attribute
+			// class is declaring class (or a super class) if no dp class
+			// attribute
 			dpClass = testMethod.getDeclaringClass();
 		}
 		return dpClass;
@@ -98,7 +111,9 @@ public class DataProviders {
 
 	/**
 	 * Determine if the test method has the parallel attribute set.
-	 * @param m The test method.
+	 * 
+	 * @param m
+	 *            The test method.
 	 * @return Whether the test will be ran in parallel.
 	 */
 	public static boolean isParallel(Method m) {
@@ -114,20 +129,25 @@ public class DataProviders {
 
 	/**
 	 * Gets the {@link DataProvider} method.
-	 * @param testAnnotation The annotation of method.
-	 * @param dpClass The class that contains the data provider method.
+	 * 
+	 * @param testAnnotation
+	 *            The annotation of method.
+	 * @param dpClass
+	 *            The class that contains the data provider method.
 	 * @return The data provider method.
 	 */
-	public static Method getDPMethod(Test testAnnotation, Class<?> dpClass) {
+	public static Method getDPMethod(Method testMethod) {
 
-		String dpName = testAnnotation.dataProvider();
-		
+		Class<?> dpClass = getDPClass(testMethod);
+		Test ta = testMethod.getAnnotation(Test.class);
+		String dpName = ta.dataProvider();
+
 		List<Method> classMethods = new ArrayList<Method>();
 		classMethods.addAll(Arrays.asList(dpClass.getMethods()));
-		
+
 		// look into all super class's methods as well
 		Class<?> superClass = dpClass.getSuperclass();
-		while(superClass != null) {
+		while (superClass != null) {
 			classMethods.addAll(Arrays.asList(superClass.getMethods()));
 			superClass = superClass.getSuperclass();
 		}
@@ -145,71 +165,35 @@ public class DataProviders {
 				}
 			}
 		}
-		
+
 		throw new IllegalStateException("Data Provider not found with name [" + dpName + "] in class [" + dpClass
 				+ "]. Check that the DataProvider name and DataProvider class are correct.");
 	}
 
 	/**
-	 * The data provider that is used when none is specified and AdamantDriver is the only test parameter.
-	 * @return The 2D containing only the AdamantDriver object(s).
+	 * Adds the AdamantDriver object to the beginning of the original data
+	 * provider array.
+	 * 
+	 * @param oldParams
+	 *            The original data provider array.
+	 * @return The new array with the AdamantDriver object inserted at at the
+	 *         beginning.
 	 */
-	@DataProvider(name = "INJECT_WEBDRIVER")
-	public static Object[][] injectWebDriver() {
-		// use "empty" 2D array so driver initialization is always done in a
-		// single place
-		return addWdInParams(new Object[1][0]);
-	}
+	static Object[][] addWdToParams(Object[][] oldParams) {
 
-	/**
-	 * The data provider that is used when there is already a data provider and AdamantDriver is the first parameter.
-	 * @param context The injected context.
-	 * @param method The inject method.
-	 * @return The 2D array of the original data with the AdamantDriver object inserted at the beginning.
-	 */
-	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS", parallel = false)
-	public static Object[][] injectWebDriverWithParams(ITestContext context, Method method) {
-		Object[][] params = callDataProvider(context, method);
-		return addWdInParams(params);
-	}
-
-	/**
-	 * Parallel version of {@link #injectWebDriverWithParams(ITestContext, Method)}.
-	 * @param context The injected context.
-	 * @param method The injected method.
-	 * @return The 2D array of the original data with the AdamantDriver object inserted at the beginning.
-	 */
-	@DataProvider(name = "INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL", parallel = true)
-	public static Object[][] injectWebDriverWithParamsParallel(ITestContext context, Method method) {
-		Object[][] params = callDataProvider(context, method);
-		return addWdInParams(params);
-	}
-
-	/**
-	 * Adds the AdamantDriver object to the beginning of the original data provider array.
-	 * @param oldParams The original data provider array.
-	 * @return The new array with the AdamantDriver object inserted at at the beginning.
-	 */
-	private static Object[][] addWdInParams(Object[][] oldParams) {
-
-		List<String> browsers = AdamantConfig.getBrowsers();
+		Browser browser = AdamantConfig.getBrowser();
 
 		Object[][] params = oldParams;
-		Object[][] paramsWithWd = new Object[params.length * browsers.size()][params[0].length + 1];
+		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
 
-		int num = 0;
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
-
-			// each browser
-			for (int k = 0; k < browsers.size(); k++) {
-				Object[] row = new Object[params[0].length + 1];
-				row[0] = new AdamantDriver(browsers.get(k));
-				for (int j = 1; j < paramsWithWd[0].length; j++) {
-					row[j] = params[i][j - 1];
-				}
-				paramsWithWd[num++] = row;
+			Object[] row = new Object[params[i].length + 1];
+			row[0] = new AdamantDriver(browser);
+			for (int j = 1; j < paramsWithWd[i].length; j++) {
+				row[j] = params[i][j - 1];
 			}
+			paramsWithWd[i] = row;
 		}
 		return paramsWithWd;
 	}

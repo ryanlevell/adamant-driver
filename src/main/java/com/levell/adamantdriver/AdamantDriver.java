@@ -9,6 +9,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.levell.adamantdriver.config.Browser;
+
 /**
  * A wrapper around WebDriver. The only difference is when the driver is opened.
  * Unlike the normal WebDriver implementations, this does not open the browser
@@ -19,13 +21,13 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  * @author ryan
  *
  */
-class AdamantDriver implements WebDriver {
+public class AdamantDriver implements WebDriver {
 
 	private WebDriver driver;
 	private Browser browser;
 
-	public AdamantDriver(String browser) {
-		this.browser = Browser.valueOf(browser.toUpperCase());
+	public AdamantDriver(Browser browser) {
+		this.browser = browser;
 	}
 
 	/**
@@ -144,6 +146,9 @@ class AdamantDriver implements WebDriver {
 		return raw().switchTo();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public String toString() {
 		return this.getClass().getSimpleName() + "{browser=" + browser+"}";
 	}

@@ -12,17 +12,13 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+
+import com.levell.adamantdriver.dataprovider.DataProviderUtil;
+import com.levell.adamantdriver.dataprovider.DataProviders;
 
 public class AdamantListener implements IAnnotationTransformer, ITestListener {
 
 	Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
-
-	// TODO: where to put?
-	// set static props
-	static {
-		System.setProperty("webdriver.chrome.driver", AdamantConfig.getChromeDriverPath());
-	}
 
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
@@ -30,6 +26,7 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener {
 		// make sure transform is acting on a method and not class/constructor
 		if (testMethod != null) {
 
+			// skip if there is no WebDriver param
 			Class<?>[] paramTypes = testMethod.getParameterTypes();
 			if (paramTypes != null && 0 < paramTypes.length) {
 				if (paramTypes[0].isAssignableFrom(WebDriver.class)) {
@@ -42,15 +39,14 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener {
 					// determine if we need to inject the old data provider
 					if (paramTypes.length == 1) {
 						annotation.setDataProviderClass(DataProviders.class);
-						annotation.setDataProvider("INJECT_WEBDRIVER");
+						annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER);
 					} else {
-						Class<?> dpClass = DataProviders.getDPClass(testMethod);
-						Method dpMethod = DataProviders.getDPMethod(testMethod.getAnnotation(Test.class), dpClass);
+						Method dpMethod = DataProviderUtil.getDPMethod(testMethod);
 						annotation.setDataProviderClass(DataProviders.class);
-						if (DataProviders.isParallel(dpMethod)) {
-							annotation.setDataProvider("INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL");
+						if (DataProviderUtil.isParallel(dpMethod)) {
+							annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL);
 						} else {
-							annotation.setDataProvider("INJECT_WEBDRIVER_WITH_PARAMS");
+							annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER_WITH_PARAMS);
 						}
 					}
 				}

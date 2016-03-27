@@ -2,6 +2,7 @@
 
 AdamantDriver is a library for Selenium WebDriver + TestNG. It handles initializing and closing WebDriver using a TestNG listener. The user just needs to include an WebDriver parameter in their TestNG test:
 
+### Simplest Usage
 ```JAVA
 @Test
 public void test(WebDriver driver) {
@@ -25,6 +26,7 @@ There is no need for a DataProvider or any other code to start using the driver 
 
 For now, the jar must be created and added to the project. The jar can be created with ```mvn package``` and found in ```target/adamant-driver...jar-with-dependencies.jar```.
 
+### Data Providers
 Although a DataProvider is not needed, DataProviders can be used normally and the driver will still be injected. The driver must be the first parameter followed by the DataProvider parameters:
 
 ```JAVA
@@ -33,19 +35,25 @@ public void test(WebDriver driver, String dataProviderParam1, String dataProvide
     driver.get(dataProviderParam1);
     Assert.assertEquals(driver.getTitle(), dataProviderParam2);
 }
+
+@DataProvider(name="someDataProvider")
+public Object[][] dataProvider() {
+    return new Object[][]{ {"str1", "str2"} };
+}
 ```
 
+### ```AdamantDriver``` Object
 The ```AdamantDriver``` object is a full wrapper of WebDriver. All the normal WebDriver methods can be used.
 
-#Limitations
+### Limitations
 
-The TestNG Parameter annotation is not currently supported. A workaround is to replace it with a DataProvider.
+1. The TestNG ```parameter``` annotation is not currently supported. A workaround is to replace it with a ```DataProvider```.
+2. Only ```FirefoxDriver``` and ```ChromeDriver``` can be used. More drivers will be supported.
 
-Only FirefoxDriver can be used. All drivers will be supported soon.
 
-
-TODO Features:
-Config file
-Screenshots
-Any browser - maven depenencies in mvn
-...
+### ```TODO``` Features:
+1. Additional config options
+2. Browser Capabilities
+3. Grid Support
+4. Proxy Support
+5. Screenshots
