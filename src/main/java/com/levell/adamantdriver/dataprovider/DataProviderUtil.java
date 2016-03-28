@@ -44,7 +44,8 @@ public class DataProviderUtil {
 		Object clazz = null;
 		if (!dpIsStatic) {
 			try {
-				// can't use dpMethod.getDeclaringClass(), method could be in abstract parent class
+				// can't use dpMethod.getDeclaringClass(), method could be in
+				// abstract parent class
 				clazz = dpClass.newInstance();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -130,10 +131,8 @@ public class DataProviderUtil {
 	/**
 	 * Gets the {@link DataProvider} method.
 	 * 
-	 * @param testAnnotation
-	 *            The annotation of method.
-	 * @param dpClass
-	 *            The class that contains the data provider method.
+	 * @param testMethod
+	 *            The test method.
 	 * @return The data provider method.
 	 */
 	public static Method getDPMethod(Method testMethod) {

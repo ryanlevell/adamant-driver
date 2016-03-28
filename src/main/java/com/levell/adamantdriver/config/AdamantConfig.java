@@ -25,7 +25,7 @@ public class AdamantConfig {
 	/**
 	 * Get the chrome driver path property.
 	 * 
-	 * @return The path. Defaults to {@link #DEFAULT_CHROME_PATH}.
+	 * @return The path.
 	 */
 	public static String getChromeDriverPath() {
 		String path = AdamantProperties.getValue(Prop.CHROME_PATH);
