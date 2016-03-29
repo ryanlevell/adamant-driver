@@ -30,7 +30,7 @@ public void test(WebDriver driver) {
 ```XML
 <suite name="SomeSuite">
 	<listeners>
-		<listener class-name="com.levell.adamantdriver.AdamantListener" />
+		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
 	</listeners>
 	...
 </suite>

@@ -1,4 +1,4 @@
-package com.levell.adamantdriver;
+package com.github.ryanlevell.adamantdriver;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;

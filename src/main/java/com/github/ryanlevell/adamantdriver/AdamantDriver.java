@@ -1,4 +1,4 @@
-package com.levell.adamantdriver;
+package com.github.ryanlevell.adamantdriver;
 
 import java.util.List;
 import java.util.Set;
@@ -9,7 +9,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.levell.adamantdriver.config.Browser;
+import com.github.ryanlevell.adamantdriver.config.Browser;
+
 
 /**
  * A wrapper around WebDriver. The only difference is when the driver is opened.

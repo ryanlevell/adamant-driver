@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Suite" parallel="false" data-provider-thread-count="5">
+	<!-- Needed when ran through mvn (point pom to one in src/test/resources sometime) -->
+	<listeners>
+		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
+	</listeners>
+	<test name="Test">
+		<packages>
+			<package name="com.github.ryanlevell.adamantdriver" />
+		</packages>
+	</test>
+</suite>

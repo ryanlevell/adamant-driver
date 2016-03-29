@@ -1,4 +1,4 @@
-package com.levell.adamantdriver.dataprovider;
+package com.github.ryanlevell.adamantdriver.dataprovider;
 
 import java.lang.reflect.Method;
 

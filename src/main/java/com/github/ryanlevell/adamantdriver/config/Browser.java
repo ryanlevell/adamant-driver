@@ -1,4 +1,4 @@
-package com.levell.adamantdriver.config;
+package com.github.ryanlevell.adamantdriver.config;
 
 /**
  * Supported browsers.

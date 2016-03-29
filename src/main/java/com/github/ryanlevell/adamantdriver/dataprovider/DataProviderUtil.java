@@ -1,4 +1,4 @@
-package com.levell.adamantdriver.dataprovider;
+package com.github.ryanlevell.adamantdriver.dataprovider;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -12,9 +12,9 @@ import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.levell.adamantdriver.AdamantDriver;
-import com.levell.adamantdriver.config.AdamantConfig;
-import com.levell.adamantdriver.config.Browser;
+import com.github.ryanlevell.adamantdriver.AdamantDriver;
+import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
+import com.github.ryanlevell.adamantdriver.config.Browser;
 
 /**
  * Contains the data provider util methods.

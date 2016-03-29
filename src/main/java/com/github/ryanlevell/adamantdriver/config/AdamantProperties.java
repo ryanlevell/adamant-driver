@@ -1,4 +1,4 @@
-package com.levell.adamantdriver.config;
+package com.github.ryanlevell.adamantdriver.config;
 
 import java.io.IOException;
 import java.io.InputStream;

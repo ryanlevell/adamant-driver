@@ -1,4 +1,4 @@
-package com.levell.adamantdriver;
+package com.github.ryanlevell.adamantdriver;
 
 import org.testng.ITestContext;
 import org.testng.ITestListener;

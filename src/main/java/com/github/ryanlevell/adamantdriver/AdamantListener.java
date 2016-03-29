@@ -1,4 +1,4 @@
-package com.levell.adamantdriver;
+package com.github.ryanlevell.adamantdriver;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -13,8 +13,8 @@ import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
 
-import com.levell.adamantdriver.dataprovider.DataProviderUtil;
-import com.levell.adamantdriver.dataprovider.DataProviders;
+import com.github.ryanlevell.adamantdriver.dataprovider.DataProviderUtil;
+import com.github.ryanlevell.adamantdriver.dataprovider.DataProviders;
 
 public class AdamantListener implements IAnnotationTransformer, ITestListener {
 

@@ -1,9 +1,9 @@
-package com.levell.adamantdriver.config;
+package com.github.ryanlevell.adamantdriver.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.levell.adamantdriver.config.AdamantProperties.Prop;
+import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
 
 /**
  * Configuration for the AdamantDriver features.
