@@ -8,14 +8,17 @@ It requires three steps to begin using in a project:
 2. [Inject a WebDriver object as a test parameter](#inject-wd)
 3. [Add the ```AdamantListener``` to the ```testng.xml```](#add-list)
 
-### Add the adamant-driver jar to your project<a name="add-jar"></a>
-This library is not yet hosted anywhere. It must be manually added into a project. This simplest way is to download the jar included in this project.
+### 1. Add the adamant-driver jar to your project<a name="add-jar"></a>
+This library is now hosted at [Maven Central](http://mvnrepository.com/artifact/com.github.ryanlevell/adamant-driver).
+```xml
+<dependency>
+  <groupId>com.github.ryanlevell</groupId>
+  <artifactId>adamant-driver</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
-1. Download [here](https://github.com/ryanlevell/adamant-driver/blob/master/release/adamant-driver-0.0.1.jar?raw=true)
-2. Copy into project
-3. Add to build path
-
-### Inject a WebDriver object as a test parameter<a name="inject-wd"></a>
+### 2. Inject a WebDriver object as a test parameter<a name="inject-wd"></a>
 ```JAVA
 @Test
 public void test(WebDriver driver) {
@@ -26,7 +29,7 @@ public void test(WebDriver driver) {
 }
 ```
 
-#### Add ```AdamantListener``` to ```testng.xml```<a name="add-list"></a>
+#### 3. Add ```AdamantListener``` to [```testng.xml```](http://testng.org/doc/documentation-main.html#testng-xml)<a name="add-list"></a>
 ```XML
 <suite name="SomeSuite">
 	<listeners>
@@ -36,8 +39,23 @@ public void test(WebDriver driver) {
 </suite>
 ```
 
+#### Why can't I just use ```@Listener(AdamantListener)``` instead of adding a ```<listener>``` to ```testng.xml```?
+AdamantListener implements ```IAnnotationTransformer```.  
+The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
+```
+The @Listeners annotation can contain any class that extends org.testng.ITestNGListener except IAnnotationTransformer and IAnnotationTransformer2. The reason is that these listeners need to be known very early in the process so that TestNG can use them to rewrite your annotations, therefore you need to specify these listeners in your testng.xml file.
+```
+
+#### Tip To Eclipse Users:
+If you are running tests via the Eclipse TestNG plugin, you may need to point Eclipse to your ```tesng.xml```.  
+The TestNG plugin uses its own ```testng.xml``` by default.  
+1. ```Project > Properties```
+2. Click ```TestNG``` in the left panel
+3. Find ```Template XML file```
+4. Enter the path to your XML, or browse for it
+
 ### Data Providers
-Although a data provider is not needed, they can be used normally and the driver will still be injected. The driver **must** be the **first** parameter followed by the data provider parameters:
+Although a data provider is not needed, they can be used normally and the driver will still be injected. The driver **must be the first parameter** followed by the data provider parameters:
 
 ```JAVA
 @Test(dataProvider="someDataProvider")

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
 	<listeners>
-		<listener class-name="com.levell.adamantdriver.AdamantListener" />
+		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
 	</listeners>
 	<test name="Test">
 		<classes>
-			<class name="com.levell.adamantdriver.AppTest" />
+			<class name="com.github.ryanlevell.adamantdriver.AppTest" />
 		</classes>
 	</test>
 </suite>

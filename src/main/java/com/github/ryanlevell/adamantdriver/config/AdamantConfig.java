@@ -29,7 +29,7 @@ public class AdamantConfig {
 	 */
 	public static String getChromeDriverPath() {
 		String path = AdamantProperties.getValue(Prop.CHROME_PATH);
-		if (path == null) {
+		if (getBrowser() == Browser.CHROME && path == null) {
 			throw new IllegalStateException(
 					"Chromedriver path was not specified. Use the " + Prop.CHROME_PATH.name().toLowerCase()
 							+ " property in adamant.properties or from the command line.");
