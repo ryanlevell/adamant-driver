@@ -17,11 +17,6 @@ public class AdamantConfig {
 
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
 	
-	// set WebDriver props
-	static {
-		System.setProperty("webdriver.chrome.driver", AdamantConfig.getChromeDriverPath());
-	}
-
 	/**
 	 * Get the chrome driver path property.
 	 * 
@@ -29,7 +24,7 @@ public class AdamantConfig {
 	 */
 	public static String getChromeDriverPath() {
 		String path = AdamantProperties.getValue(Prop.CHROME_PATH);
-		if (getBrowser() == Browser.CHROME && path == null) {
+		if (path == null) {
 			throw new IllegalStateException(
 					"Chromedriver path was not specified. Use the " + Prop.CHROME_PATH.name().toLowerCase()
 							+ " property in adamant.properties or from the command line.");

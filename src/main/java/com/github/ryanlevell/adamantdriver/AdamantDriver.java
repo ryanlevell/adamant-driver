@@ -9,6 +9,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.Browser;
 
 
@@ -42,6 +43,7 @@ public class AdamantDriver implements WebDriver {
 				driver = new FirefoxDriver();
 				break;
 			case CHROME:
+				System.setProperty("webdriver.chrome.driver", AdamantConfig.getChromeDriverPath());
 				driver = new ChromeDriver();
 				break;
 			default:

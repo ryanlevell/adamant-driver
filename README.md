@@ -39,6 +39,8 @@ public void test(WebDriver driver) {
 </suite>
 ```
 
+Execute tests: ```mvn test```
+
 #### Why can't I just use ```@Listener(AdamantListener)``` instead of adding a ```<listener>``` to ```testng.xml```?
 AdamantListener implements ```IAnnotationTransformer```.  
 The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
@@ -75,6 +77,34 @@ public static Object[][] dataProvider() {
     return new Object[][]{ {"http://google.com", "Google"} };
 }
 ```
+
+### Other Browsers
+Firefox will be used by default. Currently Chrome is the only other supported browser.  
+It can be used in two ways:
+
+1. Specify command line parameter
+```bash
+mvn test -Dbrowser=chrome
+```
+2. Specify in ```adamant.properties```
+#### adamant.properties
+```
+browser chrome
+```
+
+Using Chrome also requires defining the path to ```ChromeDriver``` in similar two ways:
+1. Specify command line parameter
+```bash
+mvn test -Dbrowser=chrome -Dchrome_path=<path to chrome driver>
+```
+2. Specify in ```adamant.properties```
+#### adamant.properties
+```
+browser chrome
+chrome_path <path to chrome driver>
+```
+
+#### NOTE: ```adamant.properties``` must be in a **root** resource folder. Except the path may also be defined with ```-DadamantProps=<path to properties file>```. It will still only look in resource folders, but into sub folders as well.
 
 ### AdamantDriver Object
 The AdamantDriver object is a full wrapper of WebDriver. All the normal WebDriver methods can be used. The only difference is the browser is not opened on instantiation. This is to prevent a large amount of browsers from opening in a data provider with many iterations.

@@ -7,7 +7,7 @@
 	<url>https://github.com/ryanlevell/adamant-driver</url>
 	<groupId>com.github.ryanlevell</groupId>
 	<artifactId>adamant-driver</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<properties>
