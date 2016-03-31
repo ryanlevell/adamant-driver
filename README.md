@@ -43,16 +43,22 @@ public void test(WebDriver driver) {
 AdamantListener implements ```IAnnotationTransformer```.  
 The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
 ```
-The @Listeners annotation can contain any class that extends org.testng.ITestNGListener except IAnnotationTransformer and IAnnotationTransformer2. The reason is that these listeners need to be known very early in the process so that TestNG can use them to rewrite your annotations, therefore you need to specify these listeners in your testng.xml file.
+The @Listeners annotation can contain any class that extends org.testng.ITestNGListener
+except IAnnotationTransformer and IAnnotationTransformer2. The reason is that these
+listeners need to be known very early in the process so that TestNG can use them to
+rewrite your annotations, therefore you need to specify these listeners in your
+testng.xml file.
 ```
 
 #### Tip To Eclipse Users:
 If you are running tests via the Eclipse TestNG plugin, you may need to point Eclipse to your ```tesng.xml```.  
-The TestNG plugin uses its own ```testng.xml``` by default.  
+The TestNG plugin uses its own ```testng.xml``` by default.
+
 1. ```Project > Properties```
 2. Click ```TestNG``` in the left panel
 3. Find ```Template XML file```
 4. Enter the path to your XML, or browse for it
+5. Click Apply
 
 ### Data Providers
 Although a data provider is not needed, they can be used normally and the driver will still be injected. The driver **must be the first parameter** followed by the data provider parameters:
