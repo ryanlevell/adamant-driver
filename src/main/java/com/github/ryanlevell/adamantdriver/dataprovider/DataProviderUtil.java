@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Test;
+import org.testng.internal.annotations.TestAnnotation;
 
-import com.github.ryanlevell.adamantdriver.AdamantDriver;
 import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.Browser;
+import com.github.ryanlevell.adamantdriver.driver.AdamantDriver;
 
 /**
  * Contains the data provider util methods.
@@ -195,5 +198,29 @@ public class DataProviderUtil {
 			paramsWithWd[i] = row;
 		}
 		return paramsWithWd;
+	}
+
+	/**
+	 * Injects a custom {@link DataProvider} into the {@link TestAnnotation} that adds the {@link WebDriver} to the params list.
+	 * 
+	 * @param annotation The annotation is customize.
+	 * @param testMethod The test method with the annotation.
+	 */
+	public static void injectDataProvider(ITestAnnotation annotation, Method testMethod) {
+		Class<?>[] paramTypes = testMethod.getParameterTypes();
+
+		// determine if we need to inject the old data provider
+		if (paramTypes.length == 1) {
+			annotation.setDataProviderClass(DataProviders.class);
+			annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER);
+		} else {
+			Method dpMethod = DataProviderUtil.getDPMethod(testMethod);
+			annotation.setDataProviderClass(DataProviders.class);
+			if (DataProviderUtil.isParallel(dpMethod)) {
+				annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER_WITH_PARAMS_PARALLEL);
+			} else {
+				annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER_WITH_PARAMS);
+			}
+		}
 	}
 }

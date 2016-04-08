@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver;
+package com.github.ryanlevell.adamantdriver.driver;
 
 import java.util.List;
 import java.util.Set;
