@@ -2,6 +2,8 @@ package com.github.ryanlevell.adamantdriver;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
 import org.testng.annotations.Parameters;
 
+import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
 import com.github.ryanlevell.adamantdriver.dataprovider.DataProviderUtil;
 import com.github.ryanlevell.adamantdriver.driver.DriverHelper;
 
@@ -65,19 +68,48 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	}
 
 	public void onStart(ITestContext context) {
-		if(!context.getCurrentXmlTest().getLocalParameters().isEmpty()) {
-			LOG.warn("Parameters in <test> tags will not yet be used in AdamantDriver config. Place AdamantDriver config parameters in the <suite> tag.");
+		if (!context.getCurrentXmlTest().getLocalParameters().isEmpty()) {
+			LOG.warn(
+					"Parameters in <test> tags will not yet be used in AdamantDriver config. Place AdamantDriver config parameters in the <suite> tag.");
 		}
 	}
 
 	public void onFinish(ITestContext context) {
+		// not used
 	}
 
+	// TODO: test this method
+	// TODO: Add DriverCapabilties interface and test using a implmentation as a
+	// xml param
 	public void onStart(ISuite suite) {
 		LOG.debug("suite params: " + suite.getXmlSuite().getParameters());
-		
+		Properties props = new Properties();
+
+		// xml parameters
+		for (Prop prop : Prop.values()) {
+			for (Map.Entry<String, String> param : suite.getXmlSuite().getParameters().entrySet()) {
+				if (prop.name().toLowerCase().equals(param.getKey())) {
+					LOG.debug("Adding XML param: [" + prop.name() + "=" + param.getValue() + "]");
+					props.setProperty(prop.name(), param.getValue());
+					break;
+				}
+			}
+		}
+
+		// cli parameters override xml
+		for (Prop prop : Prop.values()) {
+			String param = System.getProperty(prop.name().toLowerCase());
+			if (param != null) {
+				LOG.debug("Overwrite XML param: [" + prop.name() + "=" + param + "]");
+				props.setProperty(prop.name(), param);
+			}
+		}
+
+		// TODO: set AdamantProperties from here - add new method for it
+		// AdamantProperties.setProperties(props);
 	}
 
 	public void onFinish(ISuite suite) {
+		// not used
 	}
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author ryan
  *
  */
-class AdamantProperties {
+public class AdamantProperties {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantProperties.class);
 
@@ -70,7 +70,7 @@ class AdamantProperties {
 	 * @author ryan
 	 *
 	 */
-	enum Prop {
+	public enum Prop {
 		BROWSER, CHROME_PATH
 	}
 }
