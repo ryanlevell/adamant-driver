@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.ITestAnnotation;
@@ -185,6 +186,7 @@ public class DataProviderUtil {
 	static Object[][] addWdToParams(Object[][] oldParams) {
 
 		Browser browser = AdamantConfig.getBrowser();
+		DesiredCapabilities caps = AdamantConfig.getCapabilities();
 
 		Object[][] params = oldParams;
 		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
@@ -192,7 +194,7 @@ public class DataProviderUtil {
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
 			Object[] row = new Object[params[i].length + 1];
-			row[0] = new AdamantDriver(browser);
+			row[0] = new AdamantDriver(browser, caps);
 			for (int j = 1; j < paramsWithWd[i].length; j++) {
 				row[j] = params[i][j - 1];
 			}
@@ -202,10 +204,13 @@ public class DataProviderUtil {
 	}
 
 	/**
-	 * Injects a custom {@link DataProvider} into the {@link TestAnnotation} that adds the {@link WebDriver} to the params list.
+	 * Injects a custom {@link DataProvider} into the {@link TestAnnotation}
+	 * that adds the {@link WebDriver} to the params list.
 	 * 
-	 * @param annotation The annotation is customize.
-	 * @param testMethod The test method with the annotation.
+	 * @param annotation
+	 *            The annotation is customize.
+	 * @param testMethod
+	 *            The test method with the annotation.
 	 */
 	public static void injectDataProvider(ITestAnnotation annotation, Method testMethod) {
 		Class<?>[] paramTypes = testMethod.getParameterTypes();
@@ -224,7 +229,7 @@ public class DataProviderUtil {
 			}
 		}
 	}
-	
+
 	public static boolean isWebDriverTest(Method testMethod) {
 		Class<?>[] paramTypes = testMethod.getParameterTypes();
 		if (paramTypes != null && 0 < paramTypes.length) {

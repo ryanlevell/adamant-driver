@@ -2,6 +2,7 @@
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
 	<parameter name="tmp" value="suite" />
 	<parameter name="browser" value="chrome" />
+	<parameter name="capabilities_class" value="com.github.ryanlevell.adamantdriver.capabilities.ChromeIncognito" />
 	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
 	<listeners>
 		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />

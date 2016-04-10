@@ -1,8 +1,11 @@
 package com.github.ryanlevell.adamantdriver.config;
 
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.ryanlevell.adamantdriver.capabilties.DriverCapabilities;
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
 
 /**
@@ -16,7 +19,7 @@ public class AdamantConfig {
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantConfig.class);
 
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
-	
+
 	/**
 	 * Get the chrome driver path property.
 	 * 
@@ -48,5 +51,41 @@ public class AdamantConfig {
 		// default
 		LOG.info("Using default browser [" + DEFAULT_BROWSER + "]");
 		return DEFAULT_BROWSER;
+	}
+
+	public static DesiredCapabilities getCapabilities() {
+		
+		// TODO: add tests
+		// TODO: needs to pass the browser specific stuff giving to user so 1 class can be used by any browser
+		// TODO: throw error on proxy cap - plan on implementing differently
+		// TODO: How do ChromeOptions/FirefoxProfile/IE-specific/etc interact with wrong browser?
+		
+		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
+
+		if (className == null) {
+			return null;
+		}
+
+		Class<?> clazz = null;
+		try {
+			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Cannot find class [" + className + "]");
+		}
+		
+		if(!DriverCapabilities.class.isAssignableFrom(clazz)) {
+			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
+		}
+
+		Object dCaps = null;
+		try {
+			dCaps = clazz.newInstance();
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities");
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities");
+		}
+
+		return ((DriverCapabilities) dCaps).getCapabilties();
 	}
 }
