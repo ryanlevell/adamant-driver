@@ -7,13 +7,10 @@ import com.github.ryanlevell.adamantdriver.capabilties.DriverCapabilities;
 
 public class ChromeIncognito implements DriverCapabilities {
 
-	public DesiredCapabilities getCapabilties() {
-		DesiredCapabilities caps = DesiredCapabilities.chrome();
-		
+	public DesiredCapabilities getCapabilties(DesiredCapabilities caps) {
 		ChromeOptions opts = new ChromeOptions();
 		opts.addArguments("-incognito");
 		caps.setCapability(ChromeOptions.CAPABILITY, opts);
 		return caps;
 	}
-
 }

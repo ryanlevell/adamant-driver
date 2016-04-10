@@ -15,6 +15,7 @@
 		<selenium.version>2.53.0</selenium.version>
 		<testng.version>6.9.10</testng.version>
 		<slf4j.version>1.7.21</slf4j.version>
+		<commons-lang.version>3.4</commons-lang.version>
 		<maven-gpg.version>1.5</maven-gpg.version>
 		<maven-surefire.version>2.18.1</maven-surefire.version>
 		<maven-source.version>3.0.0</maven-source.version>
@@ -140,6 +141,11 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,6 +1,6 @@
 package com.github.ryanlevell.adamantdriver.config;
 
-import org.openqa.selenium.Capabilities;
+import org.apache.commons.lang3.NotImplementedException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +54,12 @@ public class AdamantConfig {
 	}
 
 	public static DesiredCapabilities getCapabilities() {
-		
+
 		// TODO: add tests
-		// TODO: needs to pass the browser specific stuff giving to user so 1 class can be used by any browser
 		// TODO: throw error on proxy cap - plan on implementing differently
-		// TODO: How do ChromeOptions/FirefoxProfile/IE-specific/etc interact with wrong browser?
-		
+		// TODO: How do ChromeOptions/FirefoxProfile/IE-specific/etc interact
+		// with wrong browser?
+
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
 		if (className == null) {
@@ -72,8 +72,8 @@ public class AdamantConfig {
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException("Cannot find class [" + className + "]");
 		}
-		
-		if(!DriverCapabilities.class.isAssignableFrom(clazz)) {
+
+		if (!DriverCapabilities.class.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
 		}
 
@@ -86,6 +86,22 @@ public class AdamantConfig {
 			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities");
 		}
 
-		return ((DriverCapabilities) dCaps).getCapabilties();
+		DesiredCapabilities caps = getCapabilities(getBrowser());
+		return ((DriverCapabilities) dCaps).getCapabilties(caps);
+	}
+
+	private static DesiredCapabilities getCapabilities(Browser browser) {
+		DesiredCapabilities caps = null;
+		switch (browser) {
+		case FIREFOX:
+			caps = DesiredCapabilities.firefox();
+			break;
+		case CHROME:
+			caps = DesiredCapabilities.chrome();
+			break;
+		default:
+			throw new NotImplementedException("Browser [" + browser + "] needs implemented");
+		}
+		return caps;
 	}
 }
