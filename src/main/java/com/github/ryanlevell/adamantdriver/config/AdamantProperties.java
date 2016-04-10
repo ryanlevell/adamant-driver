@@ -1,14 +1,15 @@
 package com.github.ryanlevell.adamantdriver.config;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.ryanlevell.adamantdriver.driver.AdamantDriver;
+
 /**
- * Class to obtain properties.
+ * Class to store properties.
  * 
  * @author ryan
  *
@@ -17,34 +18,37 @@ public class AdamantProperties {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantProperties.class);
 
-	/**
-	 * Optional properties file. Looks by default in root classpath. Use
-	 * adamantProps property to change path.
-	 */
-	private static final String PROPS_FILE_NAME = "adamant.properties";
-	private static final String PROPS_FILE = System.getProperty("adamantProps", PROPS_FILE_NAME);
 	private static final Properties PROPS = new Properties();
-	
-	/**
-	 * Get the single instance of the Properties.
-	 * 
-	 * @return The Properties object.
-	 */
-	static Properties properties() {
 
-		if (PROPS.isEmpty()) {
-			InputStream inputStream = AdamantProperties.class.getClassLoader().getResourceAsStream(PROPS_FILE);
-			if (inputStream == null) {
-				LOG.info("No properties file - will use defaults");
-			} else {
-				try {
-					PROPS.load(inputStream);
-				} catch (IOException e) {
-					throw new IllegalStateException("Error loading properties file", e);
+	private AdamantProperties() {
+		// static only
+	}
+
+	/**
+	 * Set properties for {@link AdamantDriver}.
+	 * 
+	 * @param params
+	 */
+	public static void setProperties(Map<String, String> params) {
+		// xml parameters
+		for (Prop prop : Prop.values()) {
+			for (Map.Entry<String, String> param : params.entrySet()) {
+				if (prop.name().toLowerCase().equals(param.getKey())) {
+					LOG.debug("Adding XML param: [" + prop.name() + "=" + param.getValue() + "]");
+					PROPS.setProperty(prop.name(), param.getValue());
+					break;
 				}
 			}
 		}
-		return PROPS;
+
+		// cli parameters override xml
+		for (Prop prop : Prop.values()) {
+			String param = System.getProperty(prop.name().toLowerCase());
+			if (param != null) {
+				LOG.debug("Overwrite XML param: [" + prop.name() + "=" + param + "]");
+				PROPS.setProperty(prop.name(), param);
+			}
+		}
 	}
 
 	/**
@@ -56,12 +60,7 @@ public class AdamantProperties {
 	 * @return The property value or the default or null.
 	 */
 	static String getValue(Prop p) {
-		// sys prop overrides prop file
-		String value = System.getProperty(p.name().toLowerCase());
-		if (value == null) {
-			value = (String) properties().get(p.name().toLowerCase());
-		}
-		return value;
+		return (String) PROPS.get(p.name());
 	}
 
 	/**
@@ -70,7 +69,7 @@ public class AdamantProperties {
 	 * @author ryan
 	 *
 	 */
-	public enum Prop {
+	enum Prop {
 		BROWSER, CHROME_PATH
 	}
 }

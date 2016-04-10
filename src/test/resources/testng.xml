@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
+	<parameter name="tmp" value="suite" />
+	<parameter name="browser" value="chrome" />
+	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
 	<listeners>
 		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
 	</listeners>
@@ -8,4 +11,9 @@
 			<class name="com.github.ryanlevell.adamantdriver.AppTest" />
 		</classes>
 	</test>
+	<!-- Temporary quick verification testing -->
+	<!-- <test name="Tmp1"> <parameter name="tmp" value="test1" /> <classes> 
+		<class name="com.github.ryanlevell.adamantdriver.AppTest"> <methods> <include 
+		name="testDriverParam" /> </methods> </class> </classes> </test> <test name="Tmp2"> 
+		</test> -->
 </suite>

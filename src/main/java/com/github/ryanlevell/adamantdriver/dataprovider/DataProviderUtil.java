@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.ITestAnnotation;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.TestAnnotation;
 
@@ -222,5 +223,20 @@ public class DataProviderUtil {
 				annotation.setDataProvider(DataProviders.INJECT_WEBDRIVER_WITH_PARAMS);
 			}
 		}
+	}
+	
+	public static boolean isWebDriverTest(Method testMethod) {
+		Class<?>[] paramTypes = testMethod.getParameterTypes();
+		if (paramTypes != null && 0 < paramTypes.length) {
+			if (paramTypes[0].isAssignableFrom(WebDriver.class)) {
+
+				if (testMethod.getAnnotation(Parameters.class) != null) {
+					throw new IllegalStateException(
+							"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 }

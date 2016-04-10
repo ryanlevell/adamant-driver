@@ -27,7 +27,7 @@ public class AdamantConfig {
 		if (path == null) {
 			throw new IllegalStateException(
 					"Chromedriver path was not specified. Use the " + Prop.CHROME_PATH.name().toLowerCase()
-							+ " property in adamant.properties or from the command line.");
+							+ " property in the testng.xml <suite> tag or from the command line.");
 		}
 		return path;
 	}

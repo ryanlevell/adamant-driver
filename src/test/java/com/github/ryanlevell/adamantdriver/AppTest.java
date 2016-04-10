@@ -3,6 +3,7 @@ package com.github.ryanlevell.adamantdriver;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
@@ -12,7 +13,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-
 
 //TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
@@ -84,14 +84,14 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test!");
 	}
-	
+
 	@Test(dataProvider = "parent_test")
 	public void testDriverAndParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 		Assert.assertEquals(str, "test_parent_class!");
 	}
-	
+
 	@Test(dataProvider = "parent_test_static")
 	public void testDriverAndStaticParentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
@@ -146,8 +146,9 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
-	private static List<String> values = new ArrayList<String>(Arrays.asList("parallel_0", "parallel_1", "parallel_2",
-			"parallel_3", "parallel_4", "parallel_5", "parallel_6", "parallel_7", "parallel_8", "parallel_9"));
+	private static List<String> values = Collections
+			.synchronizedList(new ArrayList<String>(Arrays.asList("parallel_0", "parallel_1", "parallel_2",
+					"parallel_3", "parallel_4", "parallel_5", "parallel_6", "parallel_7", "parallel_8", "parallel_9")));
 
 	@Test(dataProvider = "parallel")
 	public void testParallelDataProviderTests(WebDriver driver, String str) {
@@ -158,7 +159,7 @@ public class AppTest extends AppTestParent {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Assert.assertTrue(values.remove(str));
+		Assert.assertTrue(values.remove(str), "[" + str + "] was not found: " + values);
 	}
 
 	@DataProvider(name = "test")
