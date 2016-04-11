@@ -70,6 +70,6 @@ public class AdamantProperties {
 	 *
 	 */
 	enum Prop {
-		BROWSER, CHROME_PATH, CAPABILITIES_CLASS
+		BROWSER, CHROME_PATH, CAPABILITIES_CLASS, GRID_URL, USE_GRID
 	}
 }

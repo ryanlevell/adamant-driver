@@ -1,5 +1,8 @@
 package com.github.ryanlevell.adamantdriver.config;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -53,13 +56,25 @@ public class AdamantConfig {
 		return DEFAULT_BROWSER;
 	}
 
+	public static URL getGridUrl() {
+		String gridUrl = AdamantProperties.getValue(Prop.GRID_URL);
+		URL url = null;
+		try {
+			url = new URL(gridUrl);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Malformed grid URL: " + gridUrl, e);
+		}
+		return url;
+	}
+
+	public static boolean getUseGrid() {
+		return Boolean.valueOf(AdamantProperties.getValue(Prop.CAPABILITIES_CLASS));
+	}
+
 	public static DesiredCapabilities getCapabilities() {
 
 		// TODO: add tests
 		// TODO: throw error on proxy cap - plan on implementing differently
-		// TODO: How do ChromeOptions/FirefoxProfile/IE-specific/etc interact
-		// with wrong browser?
-
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
 		if (className == null) {
@@ -81,13 +96,13 @@ public class AdamantConfig {
 		try {
 			dCaps = clazz.newInstance();
 		} catch (InstantiationException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities");
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities");
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		}
 
 		DesiredCapabilities caps = getCapabilities(getBrowser());
-		return ((DriverCapabilities) dCaps).getCapabilties(caps);
+		return ((DriverCapabilities) dCaps).getCapabilties(getBrowser(), caps);
 	}
 
 	private static DesiredCapabilities getCapabilities(Browser browser) {
