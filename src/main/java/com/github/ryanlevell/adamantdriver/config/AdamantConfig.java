@@ -4,12 +4,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.openqa.selenium.Proxy;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.ryanlevell.adamantdriver.capabilties.DriverCapabilities;
+import com.github.ryanlevell.adamantdriver.capabilties.DriverProxy;
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
+
+import net.lightbody.bmp.BrowserMobProxy;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
 
 /**
  * Configuration for the AdamantDriver features.
@@ -74,14 +81,15 @@ public class AdamantConfig {
 	public static DesiredCapabilities getCapabilities() {
 
 		// TODO: add tests
-		// TODO: throw error on proxy cap - plan on implementing differently
 		DesiredCapabilities caps = getCapabilities(getBrowser());
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
+		// default caps
 		if (className == null) {
 			return caps;
 		}
 
+		// additional custom caps
 		Class<?> clazz = null;
 		try {
 			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
@@ -102,9 +110,70 @@ public class AdamantConfig {
 			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		}
 
-		return ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
+		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
+
+		// use xml/CLI for proxy
+		if (caps.getCapability(CapabilityType.PROXY) != null) {
+			throw new IllegalStateException(
+					"Found proxy capability. To use a proxy, set testng.xml or command line parameter 'use_proxy' to true and optionally set 'proxy_class' to implentation of DriverProxy");
+		}
+
+		// get proxy info from xml/CLI
+		if (getUseProxy()) {
+			caps.setCapability(CapabilityType.PROXY, getProxy());
+		}
+
+		return caps;
 	}
 
+	private static boolean getUseProxy() {
+		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_PROXY));
+	}
+
+	private static Proxy getProxy() {
+
+		// TODO: need to shutdown server after test in test listener
+		// TODO: add optional proxy object injection to test methods
+		BrowserMobProxy server = new BrowserMobProxyServer();
+		server.start();
+		Proxy proxy = ClientUtil.createSeleniumProxy(server);
+
+		String className = AdamantProperties.getValue(Prop.PROXY_CLASS);
+
+		if (className == null) {
+			return proxy;
+		}
+
+		Class<?> clazz = null;
+		try {
+			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Cannot find class [" + className + "]");
+		}
+
+		if (!DriverProxy.class.isAssignableFrom(clazz)) {
+			throw new IllegalArgumentException("Class [" + className + "] must implement DriverProxy");
+		}
+
+		Object customCaps = null;
+		try {
+			customCaps = clazz.newInstance();
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverProxy", e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverProxy", e);
+		}
+
+		((DriverProxy) customCaps).getProxy(server);
+		return proxy;
+	}
+
+	/**
+	 * Helper to get default capabilities of browser.
+	 * 
+	 * @param browser
+	 * @return
+	 */
 	private static DesiredCapabilities getCapabilities(Browser browser) {
 		DesiredCapabilities caps = null;
 		switch (browser) {

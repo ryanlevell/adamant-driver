@@ -7,7 +7,6 @@ import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.github.ryanlevell.adamantdriver.config.Browser;
 
@@ -25,13 +24,11 @@ public class AdamantDriver implements WebDriver {
 
 	private WebDriver driver;
 	private final Browser browser;
-	private final DesiredCapabilities caps;
 	private final boolean useGrid;
 	private final URL gridUrl;
 
-	public AdamantDriver(Browser browser, DesiredCapabilities caps, URL gridUrl, boolean useGrid) {
+	public AdamantDriver(Browser browser, URL gridUrl, boolean useGrid) {
 		this.browser = browser;
-		this.caps = caps;
 		this.useGrid = useGrid;
 		this.gridUrl = gridUrl;
 	}
@@ -43,7 +40,7 @@ public class AdamantDriver implements WebDriver {
 	 */
 	public WebDriver raw() {
 		if (driver == null) {
-			driver = DriverHelper.createDriver(browser, caps, gridUrl, useGrid);
+			driver = DriverHelper.createDriver(browser, gridUrl, useGrid);
 		}
 		return driver;
 	}

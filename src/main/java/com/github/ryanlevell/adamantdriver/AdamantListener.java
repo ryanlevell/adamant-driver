@@ -65,8 +65,6 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		// not used
 	}
 
-	// TODO: Add DriverCapabilties interface and test using a implmentation as a
-	// xml param
 	/**
 	 * Get suite level testng.xml parameters. Class level parameters are not
 	 * currently used.

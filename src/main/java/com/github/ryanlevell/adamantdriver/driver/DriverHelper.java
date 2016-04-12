@@ -1,6 +1,7 @@
 package com.github.ryanlevell.adamantdriver.driver;
 
 import java.net.URL;
+import java.util.Arrays;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,7 +34,17 @@ public class DriverHelper {
 		}
 	}
 
-	static WebDriver createDriver(Browser browser, DesiredCapabilities caps, URL gridUrl, boolean useGrid) {
+	/**
+	 * Instantiates the {@link WebDriver} object.
+	 * 
+	 * @param browser
+	 * @param gridUrl
+	 * @param useGrid
+	 * @return
+	 */
+	static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid) {
+
+		DesiredCapabilities caps = AdamantConfig.getCapabilities();
 		WebDriver driver = null;
 
 		if (useGrid) {
@@ -48,7 +59,8 @@ public class DriverHelper {
 				driver = caps == null ? new ChromeDriver() : new ChromeDriver(caps);
 				break;
 			default:
-				throw new IllegalStateException("[" + browser + "] is not a supported browser");
+				throw new IllegalStateException("[" + browser + "] is not a supported browser, use one of "
+						+ Arrays.toString(Browser.values()));
 			}
 		}
 		return driver;

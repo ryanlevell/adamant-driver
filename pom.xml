@@ -13,6 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<selenium.version>2.53.0</selenium.version>
+		<bmp.version>2.1.0-beta-5</bmp.version>
 		<testng.version>6.9.10</testng.version>
 		<slf4j.version>1.7.21</slf4j.version>
 		<commons-lang.version>3.4</commons-lang.version>
@@ -146,6 +147,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.lightbody.bmp</groupId>
+			<artifactId>browsermob-core-littleproxy</artifactId>
+			<version>${bmp.version}</version>
 		</dependency>
 	</dependencies>
 </project>
