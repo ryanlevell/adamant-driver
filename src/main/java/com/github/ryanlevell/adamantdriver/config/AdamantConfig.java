@@ -68,17 +68,18 @@ public class AdamantConfig {
 	}
 
 	public static boolean getUseGrid() {
-		return Boolean.valueOf(AdamantProperties.getValue(Prop.CAPABILITIES_CLASS));
+		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_GRID));
 	}
 
 	public static DesiredCapabilities getCapabilities() {
 
 		// TODO: add tests
 		// TODO: throw error on proxy cap - plan on implementing differently
+		DesiredCapabilities caps = getCapabilities(getBrowser());
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
 		if (className == null) {
-			return null;
+			return caps;
 		}
 
 		Class<?> clazz = null;
@@ -92,17 +93,16 @@ public class AdamantConfig {
 			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
 		}
 
-		Object dCaps = null;
+		Object customCaps = null;
 		try {
-			dCaps = clazz.newInstance();
+			customCaps = clazz.newInstance();
 		} catch (InstantiationException e) {
 			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		}
 
-		DesiredCapabilities caps = getCapabilities(getBrowser());
-		return ((DriverCapabilities) dCaps).getCapabilties(getBrowser(), caps);
+		return ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
 	}
 
 	private static DesiredCapabilities getCapabilities(Browser browser) {
