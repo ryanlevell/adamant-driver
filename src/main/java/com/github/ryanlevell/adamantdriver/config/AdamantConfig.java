@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,6 +29,7 @@ public class AdamantConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantConfig.class);
 
+	public static final String ADAMANT_BROWSERMOB_SERVER_CAPABILITY = "ADAMANT_BROWSERMOB_SERVER_CAPABILITY";
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
 
 	/**
@@ -65,17 +67,25 @@ public class AdamantConfig {
 
 	public static URL getGridUrl() {
 		String gridUrl = AdamantProperties.getValue(Prop.GRID_URL);
-		URL url = null;
+
+		// if param not being used
+		if (gridUrl == null) {
+			return null;
+		}
+
 		try {
-			url = new URL(gridUrl);
+			return new URL(gridUrl);
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException("Malformed grid URL: " + gridUrl, e);
 		}
-		return url;
 	}
 
 	public static boolean getUseGrid() {
-		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_GRID));
+		String useGridStr = AdamantProperties.getValue(Prop.USE_GRID);
+		if (useGridStr == null) {
+			return false;
+		}
+		return Boolean.valueOf(useGridStr);
 	}
 
 	public static DesiredCapabilities getCapabilities() {
@@ -112,28 +122,32 @@ public class AdamantConfig {
 
 		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
 
-		// use xml/CLI for proxy
-		if (caps.getCapability(CapabilityType.PROXY) != null) {
-			throw new IllegalStateException(
-					"Found proxy capability. To use a proxy, set testng.xml or command line parameter 'use_proxy' to true and optionally set 'proxy_class' to implentation of DriverProxy");
-		}
+		if (getUseIncludedProxy()) {
+			// use xml/CLI for proxy
+			if (caps.getCapability(CapabilityType.PROXY) != null) {
+				LOG.warn(
+						"Found proxy capability. Overwriting with built-in proxy. Set 'use_included_proxy' to false to use initial proxy");
+			}
 
-		// get proxy info from xml/CLI
-		if (getUseProxy()) {
-			caps.setCapability(CapabilityType.PROXY, getProxy());
+			Pair<BrowserMobProxy, Proxy> serverAndProxy = getProxy();
+			// get proxy info from xml/CLI
+			caps.setCapability(ADAMANT_BROWSERMOB_SERVER_CAPABILITY, serverAndProxy.getLeft());
+			caps.setCapability(CapabilityType.PROXY, serverAndProxy.getRight());
 		}
 
 		return caps;
 	}
 
-	private static boolean getUseProxy() {
-		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_PROXY));
+	private static boolean getUseIncludedProxy() {
+		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_INCLUDED_PROXY));
 	}
 
-	private static Proxy getProxy() {
+	private static Pair<BrowserMobProxy, Proxy> getProxy() {
 
-		// TODO: need to shutdown server after test in test listener
 		// TODO: add optional proxy object injection to test methods
+		// -- make webdriver and proxy objects ThreadLocal for internal use? aka
+		// for easy shutdown?
+
 		BrowserMobProxy server = new BrowserMobProxyServer();
 		server.start();
 		Proxy proxy = ClientUtil.createSeleniumProxy(server);
@@ -141,7 +155,7 @@ public class AdamantConfig {
 		String className = AdamantProperties.getValue(Prop.PROXY_CLASS);
 
 		if (className == null) {
-			return proxy;
+			return Pair.of(server, proxy);
 		}
 
 		Class<?> clazz = null;
@@ -165,7 +179,7 @@ public class AdamantConfig {
 		}
 
 		((DriverProxy) customCaps).getProxy(server);
-		return proxy;
+		return Pair.of(server, proxy);
 	}
 
 	/**

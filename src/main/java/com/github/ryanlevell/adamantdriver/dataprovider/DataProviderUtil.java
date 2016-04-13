@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,9 +16,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.TestAnnotation;
 
-import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
-import com.github.ryanlevell.adamantdriver.config.Browser;
-import com.github.ryanlevell.adamantdriver.driver.AdamantDriver;
+import com.github.ryanlevell.adamantdriver.config.WebDriverStub;
 
 /**
  * Contains the data provider util methods.
@@ -185,20 +182,13 @@ public class DataProviderUtil {
 	 */
 	static Object[][] addWdToParams(Object[][] oldParams) {
 
-		Browser browser = AdamantConfig.getBrowser();
-		URL gridUrl = AdamantConfig.getGridUrl();
-		boolean useGrid = AdamantConfig.getUseGrid();
-
-		// dont do here - could build up a lot of proxy instances
-		// DesiredCapabilities caps = AdamantConfig.getCapabilities();
-
 		Object[][] params = oldParams;
 		Object[][] paramsWithWd = new Object[params.length][params[0].length + 1];
 
 		// add driver to beginning of params list
 		for (int i = 0; i < params.length; i++) {
 			Object[] row = new Object[params[i].length + 1];
-			row[0] = new AdamantDriver(browser, gridUrl, useGrid);
+			row[0] = new WebDriverStub();
 			for (int j = 1; j < paramsWithWd[i].length; j++) {
 				row[j] = params[i][j - 1];
 			}

@@ -1,10 +1,18 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Suite" parallel="false" data-provider-thread-count="5">
+
 	<parameter name="tmp" value="suite" />
 	<parameter name="browser" value="chrome" />
 	<parameter name="capabilities_class"
 		value="com.github.ryanlevell.adamantdriver.capabilities.ChromeIncognito" />
 	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
+	
+	<parameter name="use_grid" value="false" />
+	<parameter name="grid_url" value="http://localhost:4444/wd/hub" />
+	
+	<parameter name="use_included_proxy" value="false" />
+	<!-- <parameter name="proxy_class" value="com.github.ryanlevell.adamantdriver.proxy.Interceptors" /> -->
+	
 	<listeners>
 		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
 	</listeners>

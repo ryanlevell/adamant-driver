@@ -8,12 +8,18 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
 
 import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.Browser;
 
+import net.lightbody.bmp.BrowserMobProxy;
+
 public class DriverHelper {
+
+	private static final Logger LOG = LoggerFactory.getLogger(DriverHelper.class);
 
 	/**
 	 * Closes the AdamantDriver via the test parameters.
@@ -21,17 +27,41 @@ public class DriverHelper {
 	 * @param result
 	 *            The test result object.
 	 */
-	public static void closeWebDriver(ITestResult result) {
-		if (result.getParameters() == null || result.getParameters().length == 0) {
-			return;
+	public static void closeDriver(ITestResult result) {
+		AdamantDriver driver = getDriver(result);
+		if (driver != null && driver.isOpen()) {
+			LOG.info("Closing WebDriver");
+			driver.quit();
 		}
-		Object param1 = result.getParameters()[0];
-		if (param1 instanceof AdamantDriver) {
-			AdamantDriver driver = (AdamantDriver) param1;
-			if (driver.isOpen()) {
-				driver.quit();
+	}
+
+	// TODO doesnt work - desiredcaps are lost
+	public static void stopProxy(ITestResult result) {
+		Object bmp = result.getAttribute("bmp");
+		if (bmp != null) {
+			LOG.info("Stopping BrowserMob proxy");
+			((BrowserMobProxy) bmp).stop();
+		}
+	}
+
+	public static void setDriver(ITestResult result, AdamantDriver driver) {
+		if (result.getParameters() != null || result.getParameters().length > 0) {
+			Object param1 = result.getParameters()[0];
+			if (param1 instanceof WebDriver) {
+				result.getParameters()[0] = driver;
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends WebDriver> T getDriver(ITestResult result) {
+		if (result.getParameters() != null && result.getParameters().length > 0) {
+			Object param1 = result.getParameters()[0];
+			if (param1 instanceof WebDriver) {
+				return (T) param1;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -42,9 +72,8 @@ public class DriverHelper {
 	 * @param useGrid
 	 * @return
 	 */
-	static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid) {
+	static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {
 
-		DesiredCapabilities caps = AdamantConfig.getCapabilities();
 		WebDriver driver = null;
 
 		if (useGrid) {

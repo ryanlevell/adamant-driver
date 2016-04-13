@@ -7,8 +7,11 @@ import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.github.ryanlevell.adamantdriver.config.Browser;
+
+// TODO: remove in favor of vanilla driver + IHookable#run to instantiate
 
 /**
  * A wrapper around WebDriver. The only difference is when the driver is opened.
@@ -26,11 +29,13 @@ public class AdamantDriver implements WebDriver {
 	private final Browser browser;
 	private final boolean useGrid;
 	private final URL gridUrl;
+	private final DesiredCapabilities caps;
 
-	public AdamantDriver(Browser browser, URL gridUrl, boolean useGrid) {
+	public AdamantDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {
 		this.browser = browser;
 		this.useGrid = useGrid;
 		this.gridUrl = gridUrl;
+		this.caps = caps;
 	}
 
 	/**
@@ -40,7 +45,7 @@ public class AdamantDriver implements WebDriver {
 	 */
 	public WebDriver raw() {
 		if (driver == null) {
-			driver = DriverHelper.createDriver(browser, gridUrl, useGrid);
+			driver = DriverHelper.createDriver(browser, gridUrl, useGrid, caps);
 		}
 		return driver;
 	}
