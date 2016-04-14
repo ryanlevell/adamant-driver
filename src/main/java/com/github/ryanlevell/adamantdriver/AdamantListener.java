@@ -3,6 +3,7 @@ package com.github.ryanlevell.adamantdriver;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -29,7 +30,8 @@ import net.lightbody.bmp.BrowserMobProxy;
 
 public class AdamantListener implements IAnnotationTransformer, ITestListener, ISuiteListener, IHookable {
 
-	Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
+	private static Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
+	private static AtomicInteger testNum = new AtomicInteger();
 
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
@@ -37,9 +39,14 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		// make sure transform is acting on a method and not class/constructor
 		if (testMethod != null) {
 			// skip if there is no WebDriver param
-			if (DataProviderUtil.isWebDriverTest(testMethod)) {
+			if (DataProviderUtil.hasWebDriverParam(testMethod)) {
+
 				// inject custom data provider that adds the WebDriver
-				DataProviderUtil.injectDataProvider(annotation, testMethod);
+				if (DataProviderUtil.hasProxyParam(testMethod)) {
+					DataProviderUtil.injectProxyProvider(annotation, testMethod);
+				} else {
+					DataProviderUtil.injectWebDriverProvider(annotation, testMethod);
+				}
 			}
 		}
 	}
@@ -108,7 +115,6 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 	public void run(IHookCallBack callBack, ITestResult testResult) {
 
-		// TODO doesnt work - desiredcaps are lost
 		WebDriver driver = DriverHelper.getDriver(testResult);
 		if (driver != null) {
 
@@ -125,20 +131,21 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 			DriverHelper.setDriver(testResult, aDriver);
 
 			Object bmp = caps.getCapability(AdamantConfig.ADAMANT_BROWSERMOB_SERVER_CAPABILITY);
+			// will be null unless use_included_proxy is true
 			if (bmp != null) {
 				testResult.setAttribute("bmp", bmp);
-			}
-
-			// TODO: add optional proxy object injection to test methods in DataProviderUtil/AdamantListener
-			// pass proxy object to params - currently stubbed
-			if (testResult.getParameters() != null && testResult.getParameters().length > 1) {
-				Object param2 = testResult.getParameters()[1];
-				if (param2 instanceof BrowserMobProxy) {
-					testResult.getParameters()[1] = bmp;
+				// pass proxy object to params - currently stubbed
+				if (testResult.getParameters() != null && testResult.getParameters().length > 1) {
+					Object param2 = testResult.getParameters()[1];
+					if (param2 instanceof BrowserMobProxy) {
+						testResult.getParameters()[1] = bmp;
+					}
 				}
 			}
+
 		}
 
+		LOG.info("Starting test #" + testNum.incrementAndGet());
 		callBack.runTestMethod(testResult);
 	}
 }

@@ -56,12 +56,12 @@ public class AdamantConfig {
 
 		String browserStr = AdamantProperties.getValue(Prop.BROWSER);
 		if (browserStr != null) {
-			LOG.info("Using browser [" + browserStr + "]");
+			LOG.debug("Using browser [" + browserStr + "]");
 			return Browser.valueOf(browserStr.trim().toUpperCase());
 		}
 
 		// default
-		LOG.info("Using default browser [" + DEFAULT_BROWSER + "]");
+		LOG.debug("Using default browser [" + DEFAULT_BROWSER + "]");
 		return DEFAULT_BROWSER;
 	}
 

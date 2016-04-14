@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.ITestAnnotation;
@@ -16,7 +18,10 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.TestAnnotation;
 
+import com.github.ryanlevell.adamantdriver.config.BrowserMobProxyStub;
 import com.github.ryanlevell.adamantdriver.config.WebDriverStub;
+
+import net.lightbody.bmp.BrowserMobProxy;
 
 /**
  * Contains the data provider util methods.
@@ -25,6 +30,8 @@ import com.github.ryanlevell.adamantdriver.config.WebDriverStub;
  *
  */
 public class DataProviderUtil {
+
+	private static Logger LOG = LoggerFactory.getLogger(DataProviderUtil.class);
 
 	/**
 	 * Calls the original data provider method.
@@ -78,11 +85,11 @@ public class DataProviderUtil {
 				params = (Object[][]) dpMethod.invoke(clazz);
 			}
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			LOG.error(Arrays.toString(e.getStackTrace()));
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			LOG.error(Arrays.toString(e.getStackTrace()));
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			LOG.error(Arrays.toString(e.getStackTrace()));
 		}
 		return params;
 	}
@@ -197,6 +204,24 @@ public class DataProviderUtil {
 		return paramsWithWd;
 	}
 
+	static Object[][] addProxyToParams(Object[][] oldParams) {
+
+		Object[][] params = oldParams;
+		Object[][] paramsWithWd = new Object[params.length][params[0].length + 2];
+
+		// add driver to beginning of params list
+		for (int i = 0; i < params.length; i++) {
+			Object[] row = new Object[params[i].length + 2];
+			row[0] = new WebDriverStub();
+			row[1] = new BrowserMobProxyStub();
+			for (int j = 2; j < paramsWithWd[i].length; j++) {
+				row[j] = params[i][j - 2];
+			}
+			paramsWithWd[i] = row;
+		}
+		return paramsWithWd;
+	}
+
 	/**
 	 * Injects a custom {@link DataProvider} into the {@link TestAnnotation}
 	 * that adds the {@link WebDriver} to the params list.
@@ -206,7 +231,7 @@ public class DataProviderUtil {
 	 * @param testMethod
 	 *            The test method with the annotation.
 	 */
-	public static void injectDataProvider(ITestAnnotation annotation, Method testMethod) {
+	public static void injectWebDriverProvider(ITestAnnotation annotation, Method testMethod) {
 		Class<?>[] paramTypes = testMethod.getParameterTypes();
 
 		// determine if we need to inject the old data provider
@@ -224,15 +249,48 @@ public class DataProviderUtil {
 		}
 	}
 
-	public static boolean isWebDriverTest(Method testMethod) {
+	public static void injectProxyProvider(ITestAnnotation annotation, Method testMethod) {
 		Class<?>[] paramTypes = testMethod.getParameterTypes();
-		if (paramTypes != null && 0 < paramTypes.length) {
-			if (paramTypes[0].isAssignableFrom(WebDriver.class)) {
 
-				if (testMethod.getAnnotation(Parameters.class) != null) {
-					throw new IllegalStateException(
-							"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
-				}
+		// determine if we need to inject the old data provider
+		if (paramTypes.length == 2) {
+			annotation.setDataProviderClass(DataProviders.class);
+			annotation.setDataProvider(DataProviders.INJECT_PROXY);
+		} else {
+			Method dpMethod = DataProviderUtil.getDPMethod(testMethod);
+			annotation.setDataProviderClass(DataProviders.class);
+			if (DataProviderUtil.isParallel(dpMethod)) {
+				annotation.setDataProvider(DataProviders.INJECT_PROXY_WITH_PARAMS_PARALLEL);
+			} else {
+				annotation.setDataProvider(DataProviders.INJECT_PROXY_WITH_PARAMS);
+			}
+		}
+	}
+
+	public static boolean hasWebDriverParam(Method testMethod) {
+		boolean isWebDriverParam = isParam(0, WebDriver.class, testMethod.getParameterTypes());
+		if (isWebDriverParam) {
+			if (testMethod.getAnnotation(Parameters.class) != null) {
+				throw new IllegalStateException(
+						"@Parameters is not yet supported by AdamantDriver. Use @DataProvider instead.");
+			}
+		}
+		return isWebDriverParam;
+	}
+
+	public static boolean hasProxyParam(Method testMethod) {
+
+		// must be webdriver test
+		if (!hasWebDriverParam(testMethod)) {
+			return false;
+		}
+
+		return isParam(1, BrowserMobProxy.class, testMethod.getParameterTypes());
+	}
+
+	private static boolean isParam(int paramIndex, Class<?> type, Class<?>[] paramTypes) {
+		if (paramTypes != null && paramIndex < paramTypes.length) {
+			if (paramTypes[paramIndex].isAssignableFrom(type)) {
 				return true;
 			}
 		}
