@@ -1,6 +1,6 @@
 package com.github.ryanlevell.adamantdriver.proxy;
 
-import com.github.ryanlevell.adamantdriver.capabilties.DriverProxy;
+import com.github.ryanlevell.adamantdriver.user_interfaces.DriverProxy;
 
 import io.netty.handler.codec.http.HttpResponse;
 import net.lightbody.bmp.BrowserMobProxy;

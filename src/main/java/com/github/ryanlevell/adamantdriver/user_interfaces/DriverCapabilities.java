@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver.capabilties;
+package com.github.ryanlevell.adamantdriver.user_interfaces;
 
 import org.openqa.selenium.remote.DesiredCapabilities;
 

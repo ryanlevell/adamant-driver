@@ -6,14 +6,13 @@ import java.net.URL;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.Proxy;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.ryanlevell.adamantdriver.capabilties.DriverCapabilities;
-import com.github.ryanlevell.adamantdriver.capabilties.DriverProxy;
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
+import com.github.ryanlevell.adamantdriver.user_interfaces.DriverCapabilities;
+import com.github.ryanlevell.adamantdriver.user_interfaces.DriverProxy;
 
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
@@ -122,27 +121,25 @@ public class AdamantConfig {
 
 		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
 
-		if (getUseIncludedProxy()) {
-			// use xml/CLI for proxy
-			if (caps.getCapability(CapabilityType.PROXY) != null) {
-				LOG.warn(
-						"Found proxy capability. Overwriting with built-in proxy. Set 'use_included_proxy' to false to use initial proxy");
-			}
-
-			Pair<BrowserMobProxy, Proxy> serverAndProxy = getProxy();
-			// get proxy info from xml/CLI
-			caps.setCapability(ADAMANT_BROWSERMOB_SERVER_CAPABILITY, serverAndProxy.getLeft());
-			caps.setCapability(CapabilityType.PROXY, serverAndProxy.getRight());
-		}
+		// if (getUseIncludedProxy()) {
+		// // use xml/CLI for proxy
+		// if (caps.getCapability(CapabilityType.PROXY) != null) {
+		// LOG.warn(
+		// "Found proxy capability. Overwriting with built-in proxy. Set
+		// 'use_included_proxy' to false to use initial proxy");
+		// }
+		//
+		// Pair<BrowserMobProxy, Proxy> serverAndProxy = getProxy();
+		// // get proxy info from xml/CLI
+		// caps.setCapability(ADAMANT_BROWSERMOB_SERVER_CAPABILITY,
+		// serverAndProxy.getLeft());
+		// caps.setCapability(CapabilityType.PROXY, serverAndProxy.getRight());
+		// }
 
 		return caps;
 	}
 
-	private static boolean getUseIncludedProxy() {
-		return Boolean.valueOf(AdamantProperties.getValue(Prop.USE_INCLUDED_PROXY));
-	}
-
-	private static Pair<BrowserMobProxy, Proxy> getProxy() {
+	public static Pair<BrowserMobProxy, Proxy> getProxy() {
 
 		// TODO: add optional proxy object injection to test methods
 		// -- make webdriver and proxy objects ThreadLocal for internal use? aka

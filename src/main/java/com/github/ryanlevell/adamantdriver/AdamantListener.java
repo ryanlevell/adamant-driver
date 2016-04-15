@@ -5,7 +5,10 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,21 +130,40 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 			URL gridUrl = AdamantConfig.getGridUrl();
 			boolean useGrid = AdamantConfig.getUseGrid();
 			DesiredCapabilities caps = AdamantConfig.getCapabilities();
+
+			if (testResult.getParameters() != null && testResult.getParameters().length > 1) {
+				Object param2 = testResult.getParameters()[1];
+				if (param2 instanceof BrowserMobProxy) {
+
+					if (caps.getCapability(CapabilityType.PROXY) != null) {
+						LOG.warn(
+								"Found proxy capability. Overwriting with built-in proxy. Remove BrowserMobProxy parameter from test parameter to use initial proxy");
+					}
+
+					Pair<BrowserMobProxy, Proxy> proxyTuple = AdamantConfig.getProxy();
+					testResult.getParameters()[1] = proxyTuple.getLeft();
+					caps.setCapability(CapabilityType.PROXY, proxyTuple.getRight());
+					testResult.setAttribute("bmp", proxyTuple.getLeft());
+				}
+			}
+
 			AdamantDriver aDriver = new AdamantDriver(browser, gridUrl, useGrid, caps);
 			DriverHelper.setDriver(testResult, aDriver);
 
-			Object bmp = caps.getCapability(AdamantConfig.ADAMANT_BROWSERMOB_SERVER_CAPABILITY);
-			// will be null unless use_included_proxy is true
-			if (bmp != null) {
-				testResult.setAttribute("bmp", bmp);
-				// pass proxy object to params - currently stubbed
-				if (testResult.getParameters() != null && testResult.getParameters().length > 1) {
-					Object param2 = testResult.getParameters()[1];
-					if (param2 instanceof BrowserMobProxy) {
-						testResult.getParameters()[1] = bmp;
-					}
-				}
-			}
+			// Object bmp =
+			// caps.getCapability(AdamantConfig.ADAMANT_BROWSERMOB_SERVER_CAPABILITY);
+			// // will be null unless use_included_proxy is true
+			// if (bmp != null) {
+			// testResult.setAttribute("bmp", bmp);
+			// // pass proxy object to params - currently stubbed
+			// if (testResult.getParameters() != null &&
+			// testResult.getParameters().length > 1) {
+			// Object param2 = testResult.getParameters()[1];
+			// if (param2 instanceof BrowserMobProxy) {
+			// testResult.getParameters()[1] = bmp;
+			// }
+			// }
+			// }
 
 		}
 
