@@ -34,7 +34,7 @@ public class DataProviders {
 		// single place
 		return DataProviderUtil.addWdToParams(new Object[1][0]);
 	}
-	
+
 	@DataProvider(name = INJECT_PROXY)
 	public static Object[][] injectProxy() {
 		// use "empty" 2D array so driver initialization is always done in a
@@ -58,7 +58,7 @@ public class DataProviders {
 		Object[][] params = DataProviderUtil.callDataProvider(context, method);
 		return DataProviderUtil.addWdToParams(params);
 	}
-	
+
 	@DataProvider(name = INJECT_PROXY_WITH_PARAMS, parallel = false)
 	public static Object[][] injectProxyWithParams(ITestContext context, Method method) {
 		Object[][] params = DataProviderUtil.callDataProvider(context, method);
@@ -81,7 +81,7 @@ public class DataProviders {
 		Object[][] params = DataProviderUtil.callDataProvider(context, method);
 		return DataProviderUtil.addWdToParams(params);
 	}
-	
+
 	@DataProvider(name = INJECT_PROXY_WITH_PARAMS_PARALLEL, parallel = true)
 	public static Object[][] injectProxyWithParamsParallel(ITestContext context, Method method) {
 		Object[][] params = DataProviderUtil.callDataProvider(context, method);

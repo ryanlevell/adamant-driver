@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
 
+import com.github.ryanlevell.adamantdriver.AdamantListener;
 import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.Browser;
 
@@ -28,8 +29,8 @@ public class DriverHelper {
 	 *            The test result object.
 	 */
 	public static void closeDriver(ITestResult result) {
-		AdamantDriver driver = getDriver(result);
-		if (driver != null && driver.isOpen()) {
+		WebDriver driver = getDriver(result);
+		if (driver != null) {
 			LOG.info("Closing WebDriver");
 			driver.quit();
 		}
@@ -37,14 +38,14 @@ public class DriverHelper {
 
 	// TODO doesnt work - desiredcaps are lost
 	public static void stopProxy(ITestResult result) {
-		Object bmp = result.getAttribute("bmp");
+		Object bmp = result.getAttribute(AdamantListener.ATTR_PROXY);
 		if (bmp != null) {
 			LOG.info("Stopping BrowserMob proxy");
 			((BrowserMobProxy) bmp).stop();
 		}
 	}
 
-	public static void setDriver(ITestResult result, AdamantDriver driver) {
+	public static void setDriver(ITestResult result, WebDriver driver) {
 		if (result.getParameters() != null || result.getParameters().length > 0) {
 			Object param1 = result.getParameters()[0];
 			if (param1 instanceof WebDriver) {
@@ -72,7 +73,7 @@ public class DriverHelper {
 	 * @param useGrid
 	 * @return
 	 */
-	static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {
+	public static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {
 
 		WebDriver driver = null;
 

@@ -11,37 +11,37 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class AppTestAnnotation {
-	
+
 	@BeforeClass
 	public void before() {
 		System.out.println("Before class...");
 	}
-	
+
 	@BeforeTest
 	public void beforeTest() {
 		System.out.println("Before test...");
 	}
-	
+
 	@BeforeMethod
 	public void beforeMethod() {
 		System.out.println("Before method...");
 	}
-	
+
 	@AfterClass
 	public void after() {
 		System.out.println("After class...");
 	}
-	
+
 	@AfterTest
 	public void aftertTest() {
 		System.out.println("After test...");
 	}
-	
+
 	@AfterMethod
 	public void afterMethod() {
 		System.out.println("After method...");
 	}
-	
+
 	@Test
 	public void testWithBeforeAndAfterAnnotations(WebDriver driver) {
 		driver.get("http://google.com");

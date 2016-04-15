@@ -26,12 +26,14 @@ import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties;
 import com.github.ryanlevell.adamantdriver.config.Browser;
 import com.github.ryanlevell.adamantdriver.dataprovider.DataProviderUtil;
-import com.github.ryanlevell.adamantdriver.driver.AdamantDriver;
 import com.github.ryanlevell.adamantdriver.driver.DriverHelper;
 
 import net.lightbody.bmp.BrowserMobProxy;
 
 public class AdamantListener implements IAnnotationTransformer, ITestListener, ISuiteListener, IHookable {
+
+	public static final String ATTR_TEST_NUMBER = "adamant_test_number";
+	public static final String ATTR_PROXY = "adamant_proxy";
 
 	private static Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
 	private static AtomicInteger testNum = new AtomicInteger();
@@ -64,6 +66,8 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		} finally {
 			DriverHelper.stopProxy(result);
 		}
+		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		LOG.info("Stopping test #" + testNum);
 	}
 
 	public void onTestFailure(ITestResult result) {
@@ -72,6 +76,8 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		} finally {
 			DriverHelper.stopProxy(result);
 		}
+		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		LOG.info("Stopping test #" + testNum);
 	}
 
 	public void onTestSkipped(ITestResult result) {
@@ -80,6 +86,8 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		} finally {
 			DriverHelper.stopProxy(result);
 		}
+		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		LOG.info("Stopping test #" + testNum);
 	}
 
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
@@ -88,6 +96,8 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		} finally {
 			DriverHelper.stopProxy(result);
 		}
+		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		LOG.info("Stopping test #" + testNum);
 	}
 
 	public void onStart(ITestContext context) {
@@ -118,6 +128,10 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 	public void run(IHookCallBack callBack, ITestResult testResult) {
 
+		long num = testNum.incrementAndGet();
+		testResult.setAttribute(ATTR_TEST_NUMBER, num);
+		LOG.info("Starting test #" + num);
+
 		WebDriver driver = DriverHelper.getDriver(testResult);
 		if (driver != null) {
 
@@ -143,31 +157,18 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 					Pair<BrowserMobProxy, Proxy> proxyTuple = AdamantConfig.getProxy();
 					testResult.getParameters()[1] = proxyTuple.getLeft();
 					caps.setCapability(CapabilityType.PROXY, proxyTuple.getRight());
-					testResult.setAttribute("bmp", proxyTuple.getLeft());
+					testResult.setAttribute(ATTR_PROXY, proxyTuple.getLeft());
 				}
 			}
 
-			AdamantDriver aDriver = new AdamantDriver(browser, gridUrl, useGrid, caps);
-			DriverHelper.setDriver(testResult, aDriver);
+			// AdamantDriver aDriver = new AdamantDriver(browser, gridUrl,
+			// useGrid, caps);
 
-			// Object bmp =
-			// caps.getCapability(AdamantConfig.ADAMANT_BROWSERMOB_SERVER_CAPABILITY);
-			// // will be null unless use_included_proxy is true
-			// if (bmp != null) {
-			// testResult.setAttribute("bmp", bmp);
-			// // pass proxy object to params - currently stubbed
-			// if (testResult.getParameters() != null &&
-			// testResult.getParameters().length > 1) {
-			// Object param2 = testResult.getParameters()[1];
-			// if (param2 instanceof BrowserMobProxy) {
-			// testResult.getParameters()[1] = bmp;
-			// }
-			// }
-			// }
-
+			LOG.info("Starting WebDriver");
+			WebDriver wd = DriverHelper.createDriver(browser, gridUrl, useGrid, caps);
+			DriverHelper.setDriver(testResult, wd);
 		}
 
-		LOG.info("Starting test #" + testNum.incrementAndGet());
 		callBack.runTestMethod(testResult);
 	}
 }

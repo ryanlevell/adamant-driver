@@ -145,6 +145,7 @@ public class AdamantConfig {
 		// -- make webdriver and proxy objects ThreadLocal for internal use? aka
 		// for easy shutdown?
 
+		LOG.info("Starting BrowserMob proxy");
 		BrowserMobProxy server = new BrowserMobProxyServer();
 		server.start();
 		Proxy proxy = ClientUtil.createSeleniumProxy(server);
