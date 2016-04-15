@@ -18,12 +18,18 @@ import com.github.ryanlevell.adamantdriver.config.Browser;
 
 import net.lightbody.bmp.BrowserMobProxy;
 
+/**
+ * Class for methods to help with {@link WebDriver} actions.
+ * 
+ * @author ryan
+ *
+ */
 public class DriverHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DriverHelper.class);
 
 	/**
-	 * Closes the AdamantDriver via the test parameters.
+	 * Closes the {@link WebDriver} via the test parameters.
 	 * 
 	 * @param result
 	 *            The test result object.
@@ -36,7 +42,12 @@ public class DriverHelper {
 		}
 	}
 
-	// TODO doesnt work - desiredcaps are lost
+	/**
+	 * Stops the {@link BrowserMobProxy} via the test attributes.
+	 * 
+	 * @param result
+	 *            The test result object.
+	 */
 	public static void stopProxy(ITestResult result) {
 		Object bmp = result.getAttribute(AdamantListener.ATTR_PROXY);
 		if (bmp != null) {
@@ -45,6 +56,14 @@ public class DriverHelper {
 		}
 	}
 
+	/**
+	 * Set the real {@link WebDriver} object to the first test parameter.
+	 * 
+	 * @param result
+	 *            The tes result object.
+	 * @param driver
+	 *            The real WebDriver.
+	 */
 	public static void setDriver(ITestResult result, WebDriver driver) {
 		if (result.getParameters() != null || result.getParameters().length > 0) {
 			Object param1 = result.getParameters()[0];
@@ -54,6 +73,12 @@ public class DriverHelper {
 		}
 	}
 
+	/**
+	 * Get the current driver object stored in the first test parameter.
+	 * 
+	 * @param result
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends WebDriver> T getDriver(ITestResult result) {
 		if (result.getParameters() != null && result.getParameters().length > 0) {
@@ -69,9 +94,12 @@ public class DriverHelper {
 	 * Instantiates the {@link WebDriver} object.
 	 * 
 	 * @param browser
+	 *            The browser being used.
 	 * @param gridUrl
+	 *            The grid URL.
 	 * @param useGrid
-	 * @return
+	 *            Whether to use the grid or not.
+	 * @return The WebDriver object.
 	 */
 	public static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {
 

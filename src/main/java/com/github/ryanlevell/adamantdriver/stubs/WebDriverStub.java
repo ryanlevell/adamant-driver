@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver.config;
+package com.github.ryanlevell.adamantdriver.stubs;
 
 import java.util.List;
 import java.util.Set;
@@ -8,11 +8,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+/**
+ * Used to temporarily store a {@link WebDriver} object in the data provider.
+ * 
+ * @author ryan
+ *
+ */
 public class WebDriverStub implements WebDriver {
 
 	/**
-	 * Throws {throwNotImplemented();@link NotImplementedException}.<br>
-	 * If this is thrown, there is a bug.
+	 * Throws {@link NotImplementedException}.<br>
+	 * Shouldn't appear, but leave a decent exception message if it does.
 	 */
 	private static void throwNotImplemented() {
 		throw new NotImplementedException(

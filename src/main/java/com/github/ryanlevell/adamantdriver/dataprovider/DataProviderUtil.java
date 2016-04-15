@@ -18,8 +18,8 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.TestAnnotation;
 
-import com.github.ryanlevell.adamantdriver.config.BrowserMobProxyStub;
-import com.github.ryanlevell.adamantdriver.config.WebDriverStub;
+import com.github.ryanlevell.adamantdriver.stubs.BrowserMobProxyStub;
+import com.github.ryanlevell.adamantdriver.stubs.WebDriverStub;
 
 import net.lightbody.bmp.BrowserMobProxy;
 
@@ -179,13 +179,13 @@ public class DataProviderUtil {
 	}
 
 	/**
-	 * Adds the AdamantDriver object to the beginning of the original data
+	 * Adds the {@link WebDriver} object to the beginning of the original data
 	 * provider array.
 	 * 
 	 * @param oldParams
 	 *            The original data provider array.
-	 * @return The new array with the AdamantDriver object inserted at at the
-	 *         beginning.
+	 * @return The new array with the {@link WebDriver} object inserted at at
+	 *         the beginning.
 	 */
 	static Object[][] addWdToParams(Object[][] oldParams) {
 
@@ -204,6 +204,15 @@ public class DataProviderUtil {
 		return paramsWithWd;
 	}
 
+	/**
+	 * Adds the {@link WebDriver} and {@link BrowserMobProxy} objects to the
+	 * beginning of the original data provider array.
+	 * 
+	 * @param oldParams
+	 *            The original data provider array.
+	 * @return The new array with the {@link WebDriver} and
+	 *         {@link BrowserMobProxy} objects inserted at at the beginning.
+	 */
 	static Object[][] addProxyToParams(Object[][] oldParams) {
 
 		Object[][] params = oldParams;
@@ -249,6 +258,16 @@ public class DataProviderUtil {
 		}
 	}
 
+	/**
+	 * Injects a custom {@link DataProvider} into the {@link TestAnnotation}
+	 * that adds the {@link WebDriver} and {@link BrowserMobProxy} to the params
+	 * list.
+	 * 
+	 * @param annotation
+	 *            The annotation is customize.
+	 * @param testMethod
+	 *            The test method with the annotation.
+	 */
 	public static void injectProxyProvider(ITestAnnotation annotation, Method testMethod) {
 		Class<?>[] paramTypes = testMethod.getParameterTypes();
 
@@ -267,6 +286,13 @@ public class DataProviderUtil {
 		}
 	}
 
+	/**
+	 * Determines if the first parameter is a {@link WebDriver}.
+	 * 
+	 * @param testMethod
+	 *            The test method.
+	 * @return True or false.
+	 */
 	public static boolean hasWebDriverParam(Method testMethod) {
 		boolean isWebDriverParam = isParam(0, WebDriver.class, testMethod.getParameterTypes());
 		if (isWebDriverParam) {
@@ -278,6 +304,14 @@ public class DataProviderUtil {
 		return isWebDriverParam;
 	}
 
+	/**
+	 * Determines if the first parameter is a {@link WebDriver} and the second
+	 * parameter is a {@link BrowserMobProxy}.
+	 * 
+	 * @param testMethod
+	 *            The test method.
+	 * @return True or false.
+	 */
 	public static boolean hasProxyParam(Method testMethod) {
 
 		// must be webdriver test
@@ -288,6 +322,17 @@ public class DataProviderUtil {
 		return isParam(1, BrowserMobProxy.class, testMethod.getParameterTypes());
 	}
 
+	/**
+	 * Determine if a parameter at the index is the class type expected.
+	 * 
+	 * @param paramIndex
+	 *            The index in the parameter list.
+	 * @param type
+	 *            The class type that is expected.
+	 * @param paramTypes
+	 *            The parameter list.
+	 * @return True or false.
+	 */
 	private static boolean isParam(int paramIndex, Class<?> type, Class<?>[] paramTypes) {
 		if (paramTypes != null && paramIndex < paramTypes.length) {
 			if (paramTypes[paramIndex].isAssignableFrom(type)) {

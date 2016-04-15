@@ -15,17 +15,21 @@ import org.slf4j.LoggerFactory;
 public class AdamantProperties {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantProperties.class);
-
 	private static final Properties PROPS = new Properties();
 
+	/**
+	 * Private constructor - static access only.
+	 */
 	private AdamantProperties() {
-		// static only
 	}
 
 	/**
-	 * Set properties for {@link AdamantDriver}.
+	 * Set properties for AdamantDriver configuration.<br>
+	 * It will check testng.xml for parameters first. It will then check command
+	 * line parameters and overwrite any xml parameters.
 	 * 
 	 * @param params
+	 *            {@link Map} of parameters.
 	 */
 	public static void setProperties(Map<String, String> params) {
 		// xml parameters
@@ -50,12 +54,12 @@ public class AdamantProperties {
 	}
 
 	/**
-	 * Get a config value. It checks system properties first, then the
-	 * properties file.
+	 * Get a config value. It checks command line parameters first, then the
+	 * testng.xml.
 	 * 
 	 * @param p
-	 *            The property to find.
-	 * @return The property value or the default or null.
+	 *            The {@link Prop} to find.
+	 * @return The parameter value or the default or null.
 	 */
 	static String getValue(Prop p) {
 		return (String) PROPS.get(p.name());
@@ -63,9 +67,6 @@ public class AdamantProperties {
 
 	/**
 	 * Supported properties.
-	 * 
-	 * @author ryan
-	 *
 	 */
 	enum Prop {
 		BROWSER, CHROME_PATH, CAPABILITIES_CLASS, GRID_URL, USE_GRID, PROXY_CLASS

@@ -27,12 +27,10 @@ import net.lightbody.bmp.client.ClientUtil;
 public class AdamantConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantConfig.class);
-
-	public static final String ADAMANT_BROWSERMOB_SERVER_CAPABILITY = "ADAMANT_BROWSERMOB_SERVER_CAPABILITY";
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
 
 	/**
-	 * Get the chrome driver path property.
+	 * Get the chrome driver path property via {@link Prop#CHROME_PATH}.
 	 * 
 	 * @return The path.
 	 */
@@ -47,9 +45,9 @@ public class AdamantConfig {
 	}
 
 	/**
-	 * Get the browser(s) property.
+	 * Get the browser property via {@link Prop#BROWSER}.
 	 * 
-	 * @return The browser(s). Defaults to {@link #DEFAULT_BROWSER}.
+	 * @return The browser. Defaults to {@link #DEFAULT_BROWSER}.
 	 */
 	public static Browser getBrowser() {
 
@@ -64,6 +62,11 @@ public class AdamantConfig {
 		return DEFAULT_BROWSER;
 	}
 
+	/**
+	 * Get the selenium grid URL via {@link Prop#GRID_URL}.
+	 * 
+	 * @return The {@link URL} object.
+	 */
 	public static URL getGridUrl() {
 		String gridUrl = AdamantProperties.getValue(Prop.GRID_URL);
 
@@ -79,6 +82,11 @@ public class AdamantConfig {
 		}
 	}
 
+	/**
+	 * If Selenium grid should be used via {@link Prop#USE_GRID}.
+	 * 
+	 * @return
+	 */
 	public static boolean getUseGrid() {
 		String useGridStr = AdamantProperties.getValue(Prop.USE_GRID);
 		if (useGridStr == null) {
@@ -87,6 +95,14 @@ public class AdamantConfig {
 		return Boolean.valueOf(useGridStr);
 	}
 
+	/**
+	 * Get default {@link DesiredCapabilities}.<br>
+	 * Allows additional custom capabilities by calling
+	 * {@link DriverCapabilities} implementation via
+	 * {@link Prop#CAPABILITIES_CLASS}.
+	 * 
+	 * @return
+	 */
 	public static DesiredCapabilities getCapabilities() {
 
 		// TODO: add tests
@@ -121,29 +137,18 @@ public class AdamantConfig {
 
 		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
 
-		// if (getUseIncludedProxy()) {
-		// // use xml/CLI for proxy
-		// if (caps.getCapability(CapabilityType.PROXY) != null) {
-		// LOG.warn(
-		// "Found proxy capability. Overwriting with built-in proxy. Set
-		// 'use_included_proxy' to false to use initial proxy");
-		// }
-		//
-		// Pair<BrowserMobProxy, Proxy> serverAndProxy = getProxy();
-		// // get proxy info from xml/CLI
-		// caps.setCapability(ADAMANT_BROWSERMOB_SERVER_CAPABILITY,
-		// serverAndProxy.getLeft());
-		// caps.setCapability(CapabilityType.PROXY, serverAndProxy.getRight());
-		// }
-
 		return caps;
 	}
 
+	/**
+	 * Initializes and starts {@link BrowserMobProxy}.<br>
+	 * The {@link BrowserMobProxy} object can be enhanced with interceptors,
+	 * header editing, etc by calling a {@link DriverProxy} implementation via
+	 * {@value Prop#PROXY_CLASS}.
+	 * 
+	 * @return The {@link BrowserMobProxy} and {@link Proxy} tuple.
+	 */
 	public static Pair<BrowserMobProxy, Proxy> getProxy() {
-
-		// TODO: add optional proxy object injection to test methods
-		// -- make webdriver and proxy objects ThreadLocal for internal use? aka
-		// for easy shutdown?
 
 		LOG.info("Starting BrowserMob proxy");
 		BrowserMobProxy server = new BrowserMobProxyServer();
@@ -184,7 +189,8 @@ public class AdamantConfig {
 	 * Helper to get default capabilities of browser.
 	 * 
 	 * @param browser
-	 * @return
+	 *            The {@link Browser} being used.
+	 * @return The {@link DesiredCapabilities} object.
 	 */
 	private static DesiredCapabilities getCapabilities(Browser browser) {
 		DesiredCapabilities caps = null;

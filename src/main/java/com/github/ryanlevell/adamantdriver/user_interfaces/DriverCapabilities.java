@@ -9,7 +9,7 @@ import com.github.ryanlevell.adamantdriver.config.Browser;
  * <p>
  * 
  * The class that implements this interface must be set via testng.xml or
- * command line with key <b>CAPABILITIES_CLASS</b>
+ * command line with key <b>CAPABILITIES_CLASS</b>.
  * 
  * @author ryan
  *

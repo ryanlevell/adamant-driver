@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver.config;
+package com.github.ryanlevell.adamantdriver.stubs;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -12,8 +12,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.littleshoot.proxy.HttpFiltersSource;
 import org.littleshoot.proxy.MitmManager;
 
-import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
-
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.filters.RequestFilter;
@@ -22,8 +20,6 @@ import net.lightbody.bmp.proxy.BlacklistEntry;
 import net.lightbody.bmp.proxy.CaptureType;
 import net.lightbody.bmp.proxy.auth.AuthType;
 import net.lightbody.bmp.proxy.dns.AdvancedHostResolver;
-
-// TODO add WebDriverStub as well instead of AdamantDriver?
 
 /**
  * Used to temporarily store a {@link BrowserMobProxy} object in the data
@@ -36,13 +32,11 @@ public class BrowserMobProxyStub implements BrowserMobProxy {
 
 	/**
 	 * Throws {@link NotImplementedException}.<br>
-	 * Possible to erroneously have this implementation in a test if
-	 * {@link Prop#USE_INCLUDED_PROXY} is not true<br>
-	 * and the test method has injected the {@link BrowserMobProxy} parameter.
+	 * Shouldn't appear, but leave a decent exception message if it does.
 	 */
 	private static void throwNotImplemented() {
 		throw new NotImplementedException(
-				"BrowserMobProxy was not initialized. Did you set use_included_proxy to true?");
+				"BrowserMobProxy was not initialized. Create a new issue in AdamantDriver Github page with code to duplicate this error.");
 	}
 
 	public void start() {

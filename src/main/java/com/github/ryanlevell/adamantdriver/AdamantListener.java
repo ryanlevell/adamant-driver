@@ -22,6 +22,7 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 import org.testng.annotations.ITestAnnotation;
 
+import com.beust.jcommander.Parameter;
 import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties;
 import com.github.ryanlevell.adamantdriver.config.Browser;
@@ -30,6 +31,13 @@ import com.github.ryanlevell.adamantdriver.driver.DriverHelper;
 
 import net.lightbody.bmp.BrowserMobProxy;
 
+/**
+ * Implements all interfaces used by AdamantDriver. This makes it simple for the
+ * user to get up and running using this single class.
+ * 
+ * @author ryan
+ *
+ */
 public class AdamantListener implements IAnnotationTransformer, ITestListener, ISuiteListener, IHookable {
 
 	public static final String ATTR_TEST_NUMBER = "adamant_test_number";
@@ -38,6 +46,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	private static Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
 	private static AtomicInteger testNum = new AtomicInteger();
 
+	/**
+	 * Inject custom data providers if needed.
+	 */
 	@SuppressWarnings("rawtypes")
 	public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
 
@@ -60,6 +71,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		// not used
 	}
 
+	/**
+	 * Stop WebDriver and Proxy.
+	 */
 	public void onTestSuccess(ITestResult result) {
 		try {
 			DriverHelper.closeDriver(result);
@@ -70,6 +84,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		LOG.info("Stopping test #" + testNum);
 	}
 
+	/**
+	 * Stop WebDriver and Proxy.
+	 */
 	public void onTestFailure(ITestResult result) {
 		try {
 			DriverHelper.closeDriver(result);
@@ -80,6 +97,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		LOG.info("Stopping test #" + testNum);
 	}
 
+	/**
+	 * Stop WebDriver and Proxy.
+	 */
 	public void onTestSkipped(ITestResult result) {
 		try {
 			DriverHelper.closeDriver(result);
@@ -90,6 +110,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		LOG.info("Stopping test #" + testNum);
 	}
 
+	/**
+	 * Stop WebDriver and Proxy.
+	 */
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
 		try {
 			DriverHelper.closeDriver(result);
@@ -100,6 +123,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		LOG.info("Stopping test #" + testNum);
 	}
 
+	/**
+	 * Warn that {@link Parameter} annotation is not supported by AdamantDriver.
+	 */
 	public void onStart(ITestContext context) {
 		if (!context.getCurrentXmlTest().getLocalParameters().isEmpty()) {
 			LOG.warn(
@@ -116,6 +142,7 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	 * currently used.
 	 * 
 	 * @param suite
+	 *            The XML test suite.
 	 */
 	public void onStart(ISuite suite) {
 		LOG.debug("suite params: " + suite.getXmlSuite().getParameters());
@@ -126,6 +153,11 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		// not used
 	}
 
+	/**
+	 * Initialize everything needed for the test right before the test is ran.
+	 * <br>
+	 * Instantiates the WebDriver, DesiredCapabilities, and BrowserMobProxy.
+	 */
 	public void run(IHookCallBack callBack, ITestResult testResult) {
 
 		long num = testNum.incrementAndGet();
@@ -134,10 +166,6 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 		WebDriver driver = DriverHelper.getDriver(testResult);
 		if (driver != null) {
-
-			// moved from DataProviderUtil.addWdToParams so we can access caps
-			// desired caps are lost when webdriver is instantiated
-			// need caps to get proxy data
 
 			// instantiate driver - currently stubbed
 			Browser browser = AdamantConfig.getBrowser();
