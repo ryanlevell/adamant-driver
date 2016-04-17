@@ -194,6 +194,7 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 			LOG.info("Starting WebDriver");
 			WebDriver wd = DriverHelper.createDriver(browser, gridUrl, useGrid, caps);
+			AdamantConfig.getOptions(wd);
 			DriverHelper.setDriver(testResult, wd);
 		}
 

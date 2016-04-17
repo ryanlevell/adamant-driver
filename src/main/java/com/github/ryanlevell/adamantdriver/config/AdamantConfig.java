@@ -6,12 +6,14 @@ import java.net.URL;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.Proxy;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
 import com.github.ryanlevell.adamantdriver.user_interfaces.DriverCapabilities;
+import com.github.ryanlevell.adamantdriver.user_interfaces.DriverOptions;
 import com.github.ryanlevell.adamantdriver.user_interfaces.DriverProxy;
 
 import net.lightbody.bmp.BrowserMobProxy;
@@ -138,6 +140,48 @@ public class AdamantConfig {
 		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
 
 		return caps;
+	}
+	
+	/**
+	 * Get default {@link DesiredCapabilities}.<br>
+	 * Allows additional custom capabilities by calling
+	 * {@link DriverCapabilities} implementation via
+	 * {@link Prop#CAPABILITIES_CLASS}.
+	 * 
+	 * @param driver The WebDriver object.
+	 */
+	public static void getOptions(WebDriver driver) {
+
+		// TODO: add tests
+		String className = AdamantProperties.getValue(Prop.OPTIONS_CLASS);
+
+		// do nothing
+		if (className == null) {
+			return;
+		}
+
+		// additional custom caps
+		Class<?> clazz = null;
+		try {
+			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Cannot find class [" + className + "]");
+		}
+
+		if (!DriverOptions.class.isAssignableFrom(clazz)) {
+			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
+		}
+
+		Object customOptions = null;
+		try {
+			customOptions = clazz.newInstance();
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
+		}
+
+		((DriverOptions) customOptions).getOptions(getBrowser(), driver.manage());
 	}
 
 	/**

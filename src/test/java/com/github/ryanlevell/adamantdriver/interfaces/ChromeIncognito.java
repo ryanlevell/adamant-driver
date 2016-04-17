@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver.capabilities;
+package com.github.ryanlevell.adamantdriver.interfaces;
 
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;

@@ -1,4 +1,4 @@
-package com.github.ryanlevell.adamantdriver.proxy;
+package com.github.ryanlevell.adamantdriver.interfaces;
 
 import com.github.ryanlevell.adamantdriver.user_interfaces.DriverProxy;
 
