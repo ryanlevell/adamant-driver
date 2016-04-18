@@ -8,9 +8,10 @@ import com.github.ryanlevell.adamantdriver.user_interfaces.DriverCapabilities;
 
 public class ChromeIncognito implements DriverCapabilities {
 
-	public DesiredCapabilities getCapabilties(Browser browser, DesiredCapabilities caps) {
+	public void getCapabilties(Browser browser, DesiredCapabilities caps) {
 		ChromeOptions opts = new ChromeOptions();
 		opts.addArguments("-incognito");
+		//opts.addArguments("start-maximized");
 		caps.setCapability(ChromeOptions.CAPABILITY, opts);
 
 		// BrowserMobProxy server = new BrowserMobProxyServer();
@@ -18,6 +19,6 @@ public class ChromeIncognito implements DriverCapabilities {
 		// caps.setCapability(CapabilityType.PROXY,
 		// ClientUtil.createSeleniumProxy(server));
 
-		return caps;
+		// return caps;
 	}
 }

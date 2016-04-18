@@ -137,18 +137,21 @@ public class AdamantConfig {
 			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
 		}
 
-		caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
+		((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
+		// caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(),
+		// caps);
 
 		return caps;
 	}
-	
+
 	/**
 	 * Get default {@link DesiredCapabilities}.<br>
 	 * Allows additional custom capabilities by calling
 	 * {@link DriverCapabilities} implementation via
 	 * {@link Prop#CAPABILITIES_CLASS}.
 	 * 
-	 * @param driver The WebDriver object.
+	 * @param driver
+	 *            The WebDriver object.
 	 */
 	public static void getOptions(WebDriver driver) {
 

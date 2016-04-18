@@ -15,6 +15,7 @@ import org.testng.ITestResult;
 import com.github.ryanlevell.adamantdriver.AdamantListener;
 import com.github.ryanlevell.adamantdriver.config.AdamantConfig;
 import com.github.ryanlevell.adamantdriver.config.Browser;
+import com.github.ryanlevell.adamantdriver.stubs.WebDriverStub;
 
 import net.lightbody.bmp.BrowserMobProxy;
 
@@ -36,7 +37,10 @@ public class DriverHelper {
 	 */
 	public static void closeDriver(ITestResult result) {
 		WebDriver driver = getDriver(result);
-		if (driver != null) {
+
+		// if stub here, error happened on initialization - dont try to close it
+		// was somewhat hide real error
+		if (driver != null && !(driver instanceof WebDriverStub)) {
 			LOG.info("Closing WebDriver");
 			driver.quit();
 		}
