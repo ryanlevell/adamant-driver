@@ -1,0 +1,22 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="chrome" parallel="false" data-provider-thread-count="5">
+
+	<parameter name="browser" value="chrome" />
+	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
+	<parameter name="capabilities_class"
+		value="com.github.ryanlevell.adamantdriver.interfaces.TestCapabilities" />
+	<parameter name="options_class"
+		value="com.github.ryanlevell.adamantdriver.interfaces.TestOptions" />
+	<parameter name="proxy_class"
+		value="com.github.ryanlevell.adamantdriver.interfaces.TestProxy" />
+
+	<listeners>
+		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
+	</listeners>
+
+	<test name="Test">
+		<packages>
+			<package name="com.github.ryanlevell.adamantdriver"></package>
+		</packages>
+	</test>
+</suite>

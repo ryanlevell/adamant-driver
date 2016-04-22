@@ -25,16 +25,18 @@
 
 	<licenses>
 		<license>
-			<name>MIT License</name>
-			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
+
 	<developers>
 		<developer>
 			<name>Ryan</name>
 			<email>ryanlevell@gmail.com</email>
 		</developer>
 	</developers>
+
 	<scm>
 		<url>https://github.com/ryanlevell/adamant-driver.git</url>
 	</scm>
@@ -72,7 +74,7 @@
 				<version>${maven-surefire.version}</version>
 				<configuration>
 					<suiteXmlFiles>
-						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+						<suiteXmlFile>src/test/resources/chrome.xml</suiteXmlFile>
 					</suiteXmlFiles>
 				</configuration>
 			</plugin>

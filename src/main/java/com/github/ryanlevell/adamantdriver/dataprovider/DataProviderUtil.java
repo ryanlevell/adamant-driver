@@ -174,8 +174,8 @@ public class DataProviderUtil {
 			}
 		}
 
-		throw new IllegalStateException("Data Provider not found with name [" + dpName + "] in class [" + dpClass
-				+ "]. Check that the DataProvider name and DataProvider class are correct.");
+		throw new IllegalStateException("Data Provider not found with name [" + dpName + "] in [" + dpClass + "#"
+				+ testMethod.getName() + "]. Check that the DataProvider name and DataProvider class are correct.");
 	}
 
 	/**

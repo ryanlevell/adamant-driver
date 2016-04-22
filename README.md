@@ -129,3 +129,4 @@ The jar can be found in ```<project root>/target/adamant-driver...jar-with-depen
 3. Grid Support
 4. Proxy Support
 5. Screenshots
+6. Retry analyzer + boolean whether to remove retries from results

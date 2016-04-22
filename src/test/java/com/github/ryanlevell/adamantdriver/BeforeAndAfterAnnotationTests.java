@@ -1,49 +1,37 @@
 package com.github.ryanlevell.adamantdriver;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-public class AppTestAnnotation {
+public class BeforeAndAfterAnnotationTests {
+	
+	private final AtomicInteger count = new AtomicInteger();
 
 	@BeforeClass
 	public void before() {
-		System.out.println("Before class...");
+		count.incrementAndGet();
 	}
 
 	@BeforeTest
 	public void beforeTest() {
-		System.out.println("Before test...");
+		count.incrementAndGet();
 	}
 
 	@BeforeMethod
 	public void beforeMethod() {
-		System.out.println("Before method...");
-	}
-
-	@AfterClass
-	public void after() {
-		System.out.println("After class...");
-	}
-
-	@AfterTest
-	public void aftertTest() {
-		System.out.println("After test...");
-	}
-
-	@AfterMethod
-	public void afterMethod() {
-		System.out.println("After method...");
+		count.incrementAndGet();
 	}
 
 	@Test
 	public void testWithBeforeAndAfterAnnotations(WebDriver driver) {
+		Assert.assertEquals(count.get(), 3, "Not all before annotations were called");
+		
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}

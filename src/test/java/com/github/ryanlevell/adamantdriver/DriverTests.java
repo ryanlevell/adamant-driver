@@ -10,39 +10,14 @@ import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import com.github.ryanlevell.adamantdriver.test_util.DataProviderParent;
+import com.github.ryanlevell.adamantdriver.test_util.DataProviders;
 
 //TODO: add tests for multiple browsers + params
 //TODO: test with other WD classes (options, navigate, etc)
-public class AppTest extends AppTestParent {
-	@Test
-	public void testNoParams() {
-		// if it passes then good!
-	}
-
-	@Parameters("test!!!")
-	@Test
-	public void testAnnotatedNonDriverParam(@Optional("test!!!") String str) {
-		Assert.assertEquals(str, "test!!!");
-	}
-
-	// Will fail everything - Don't know how to support @Parameters yet when
-	// injecting a driver.
-	// @Parameters("test!!")
-	// @Test
-	// public void testDriverParamAndAnnotatedParam(WebDriver driver,
-	// @Optional("test!!") String str) {
-	// driver.get("http://google.com");
-	// Assert.assertEquals(driver.getTitle(), "Google");
-	// Assert.assertEquals(str, "test!!");
-	// }
-
-	@Test(dataProvider = "test")
-	public void testNonDriverDataProviderParam(String str) {
-		Assert.assertEquals(str, "test!");
-	}
+public class DriverTests extends DataProviderParent {
 
 	@Test(dataProvider = "test_non_static")
 	public void testDriverWithNonStaticDataProvider(WebDriver driver, String str) {
@@ -52,22 +27,10 @@ public class AppTest extends AppTestParent {
 	}
 
 	@Test
-	public void testDriverParam(WebDriver driver) {
+	public void testDriverParam(WebDriver driver) {// , BrowserMobProxy proxy) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
-
-	// sys prop must be set manually to firefox before test to run this test
-	// @Test
-	// public void testDriverSystemProperty(WebDriver driver) {
-	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
-	// }
-
-	// must delete/rename props file to run this test
-	// @Test
-	// public void testNoPropertiesFile(WebDriver driver) {
-	// Assert.assertTrue(driver.raw() instanceof FirefoxDriver);
-	// }
 
 	// TODO: test multiple browsers in sys prop/prop file
 
@@ -99,7 +62,7 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(str, "test_parent_class_static!");
 	}
 
-	@Test(dataProvider = "test", dataProviderClass = AppTestDataProviders.class)
+	@Test(dataProvider = "test", dataProviderClass = DataProviders.class)
 	public void testDriverAndDifferentClassDataProviderParam(WebDriver driver, String str) {
 		driver.get("http://google.com");
 		Assert.assertEquals(driver.getTitle(), "Google");
@@ -136,7 +99,7 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
-	private static int pos = 0;
+	private int pos = 0;
 
 	@Test(dataProvider = "test_2_params")
 	public void testDriverAndTwoDataProviderParams(WebDriver driver, String str, String str2) {
@@ -146,7 +109,7 @@ public class AppTest extends AppTestParent {
 		Assert.assertEquals(driver.getTitle(), "Google");
 	}
 
-	private static List<String> values = Collections
+	private List<String> values = Collections
 			.synchronizedList(new ArrayList<String>(Arrays.asList("parallel_0", "parallel_1", "parallel_2",
 					"parallel_3", "parallel_4", "parallel_5", "parallel_6", "parallel_7", "parallel_8", "parallel_9")));
 
@@ -161,7 +124,7 @@ public class AppTest extends AppTestParent {
 		}
 		Assert.assertTrue(values.remove(str), "[" + str + "] was not found: " + values);
 	}
-
+	
 	@DataProvider(name = "test")
 	public static Object[][] provideTestParam() {
 		return new Object[][] { { "test!" } };

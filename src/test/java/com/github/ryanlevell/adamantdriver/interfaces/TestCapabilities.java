@@ -6,19 +6,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.github.ryanlevell.adamantdriver.config.Browser;
 import com.github.ryanlevell.adamantdriver.user_interfaces.DriverCapabilities;
 
-public class ChromeIncognito implements DriverCapabilities {
+public class TestCapabilities implements DriverCapabilities {
 
 	public void getCapabilties(Browser browser, DesiredCapabilities caps) {
 		ChromeOptions opts = new ChromeOptions();
-		opts.addArguments("-incognito");
-		//opts.addArguments("start-maximized");
+		opts.addArguments("window-position=44,33");
 		caps.setCapability(ChromeOptions.CAPABILITY, opts);
-
-		// BrowserMobProxy server = new BrowserMobProxyServer();
-		// server.start();
-		// caps.setCapability(CapabilityType.PROXY,
-		// ClientUtil.createSeleniumProxy(server));
-
-		// return caps;
 	}
 }

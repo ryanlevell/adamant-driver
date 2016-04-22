@@ -1,8 +1,8 @@
-package com.github.ryanlevell.adamantdriver;
+package com.github.ryanlevell.adamantdriver.test_util;
 
 import org.testng.annotations.DataProvider;
 
-public class AppTestDataProviders {
+public class DataProviders {
 
 	@DataProvider(name = "test")
 	public static Object[][] provideTestParam() {

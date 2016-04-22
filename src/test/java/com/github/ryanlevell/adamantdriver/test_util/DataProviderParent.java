@@ -1,8 +1,8 @@
-package com.github.ryanlevell.adamantdriver;
+package com.github.ryanlevell.adamantdriver.test_util;
 
 import org.testng.annotations.DataProvider;
 
-public abstract class AppTestParent {
+public abstract class DataProviderParent {
 
 	@DataProvider(name = "parent_test_static")
 	public static Object[][] provideTestParamParentStatic() {
@@ -13,5 +13,4 @@ public abstract class AppTestParent {
 	public Object[][] provideTestParamParent() {
 		return new Object[][] { { "test_parent_class!" } };
 	}
-
 }
