@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="chrome" parallel="false" data-provider-thread-count="5">
+<suite name="chrome" parallel="methods" thread-count="5" data-provider-thread-count="5">
 
 	<parameter name="browser" value="chrome" />
 	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
