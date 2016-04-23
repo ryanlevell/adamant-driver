@@ -141,9 +141,8 @@ SNAPSHOT versions can be used by adding the following to ```settings.xml``` or `
 </repository>
 ```
 
-#### Can ```@Listener(AdamantListener)``` instead of the ```<listener>``` tag?
-No, AdamantListener implements ```IAnnotationTransformer```.  
-The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
+#### Can ```@Listener(AdamantListener)``` be used instead of the ```<listener>``` tag?
+No, AdamantListener implements ```IAnnotationTransformer```. The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
 >The @Listeners annotation can contain any class that extends org.testng.ITestNGListener
 **except IAnnotationTransformer and IAnnotationTransformer2**. The reason is that these
 listeners need to be known very early in the process so that TestNG can use them to
