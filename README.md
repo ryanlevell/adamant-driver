@@ -4,9 +4,9 @@ AdamantDriver is a library combining Selenium WebDriver + TestNG. It enables a u
 
 The first 3 steps will get you started:
 
-1. **[Add the adamant-driver jar to your project]**(#add-jar)
-2. **[Inject a WebDriver object as a test parameter]**(#inject-wd)
-3. **[Add AdamantListener to testng.xml]**(#add-list)
+1. **[Add the adamant-driver jar to your project](#add-jar)**
+2. **[Inject a WebDriver object as a test parameter](#inject-wd)**
+3. **[Add AdamantListener to testng.xml](#add-list)**
 4. [Using a DataProvider](#dp)
 5. [AdamantDriver Parameters](#test-params)
 6. [Manually building the project](#manual-build)
