@@ -6,7 +6,9 @@ The first 3 steps will get you started:
 1. [Add the adamant-driver jar to your project](#add-jar)
 2. [Inject a WebDriver object as a test parameter](#inject-wd)
 3. [Add AdamantListener to testng.xml](#add-list)
+
 ---
+
 4. [Using a DataProvider](#dp)
 5. [AdamantDriver Parameters](#test-params)
 6. [Manually building the project](#manual-build)
@@ -83,10 +85,12 @@ public static Object[][] dataProvider() {
 
 ### 5. AdamantDriver Parameters<a name="test-params"></a>
 ---
-All AdamantDriver specific parameters can be specified in the testng.xml ```<suite>``` tag or from the command line. Parameters in a ```<test>``` tag will not be used.
+No AdamantDriver parameters are required, but they can be used for additional functionality.  
+All AdamantDriver specific parameters can be specified in 2 ways:
+1. The testng.xml ```<suite>``` tag. (Note: Parameters in a ```<test>``` tag will not be used)
+2. From the command line.
 
-#### Usage:
-```testng.xml```
+#### 1. testng.xml usage:
 ```XML
 ...
   <suite name="suite-name">
@@ -96,21 +100,21 @@ All AdamantDriver specific parameters can be specified in the testng.xml ```<sui
 ...
 ```
 
-```command line```
+#### 2. command line usage:
 ```BASH
-mvn -Dparametername=parametervalue test
+mvn test -Dparametername=parametervalue
 ```
 
 #### Parameters:
-| testng.xml              | command line           | values                       | default | description                    |
-|-------------------------|------------------------|------------------------------|---------|--------------------------------|
-| browser                 | browser                | firefox, chrome              | firefox | The driver to use for testing. |
-| chrome_path             | chrome_path            | <full path to chrome driver> | none    | The path to the chrome driver. |
-| capabilities_class      | capabilities_class     | <fully qualified class>      | none    | The class that implements the DriverCapabilties interface. |
-| options_class           | options_class          | <fully qualified class>      | none    | The class that implements the DriverOptions interface. |
-| proxy_class             | proxy_class            | <fully qualified class>      | none    | The class that implements the DriverProxy interface. |
-| use_grid                | use_grid               | true, false                  | false   | Whether to run tests locally or on the grid. |
-| grid_url                | grid_url               | <your grid URL>              | none    | The URL to Selenium grid hub. |
+| parameter          | values                             | default | description                    |
+|--------------------|------------------------------------|---------|--------------------------------|
+| browser            | firefox, chrome                    | firefox | The driver to use for testing. |
+| chrome_path        | &lt;full path to chrome driver&gt; | none    | The path to the chrome driver. |
+| capabilities_class | &lt;fully qualified class&gt;      | none    | The class that implements the DriverCapabilties interface. |
+| options_class      | &lt;fully qualified class&gt;      | none    | The class that implements the DriverOptions interface. |
+| proxy_class        | &lt;fully qualified class&gt;      | none    | The class that implements the DriverProxy interface. |
+| use_grid           | true, false                        | false   | Whether to run tests locally or on the grid. |
+| grid_url           | &lt;your grid URL&gt;              | none    | The URL to the Selenium grid hub. |
 
 
 ### 6. Manually building the project<a name="manual-build"></a>
@@ -124,7 +128,7 @@ The jar can be found in ```<project root>/target/adamant-driver...jar-with-depen
 
 ### 7. Limitations<a name="limitations"></a>
 ---
-1. The TestNG ```@Parameter``` annotation cannot be used with a Selenium test. This is because AdamantDriver injects a data provider to all Selenium tests.
+1. The TestNG ```@Parameter``` annotation cannot be used with a WebDriver test. This is because AdamantDriver injects a data provider to all WebDriver tests.
 2. Only ```FirefoxDriver``` and ```ChromeDriver``` can be used. More browsers will be added.
 3. Anything not supported described in [TODO Features](#todo).
 
@@ -146,7 +150,7 @@ rewrite your annotations, therefore you need to specify these listeners in your
 testng.xml file.
 
 #### Tip To Eclipse Users:
-If you are running tests via the Eclipse TestNG plugin, you may need to point Eclipse to your ```tesng.xml```. The TestNG plugin uses its own ```testng.xml``` by default. Follow the steps below to use your own XML as the template:
+If you are running tests via the Eclipse TestNG plugin, you may need to point Eclipse to your ```testng.xml```. The TestNG plugin uses its own ```testng.xml``` by default. Follow the steps below to use your own XML as the template:
 
 1. ```Project``` > ```Properties```
 2. Click ```TestNG``` in the left panel
