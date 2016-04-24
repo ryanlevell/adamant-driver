@@ -24,7 +24,6 @@ public interface DriverCapabilities {
 	 *            used.
 	 * @param caps
 	 *            The capabilities object to add additional capabilities to.
-	 * @return The original caps object with newly set capabilties.
 	 */
 	void getCapabilties(Browser browser, DesiredCapabilities caps);
 }

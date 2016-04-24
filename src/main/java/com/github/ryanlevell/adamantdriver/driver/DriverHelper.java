@@ -80,8 +80,11 @@ public class DriverHelper {
 	/**
 	 * Get the current driver object stored in the first test parameter.
 	 * 
+	 * @param <T>
+	 *            A current implementation class of the WebDriver object.
 	 * @param result
-	 * @return
+	 *            The current test result object.
+	 * @return The current WebDriver object in the test parameters.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends WebDriver> T getDriver(ITestResult result) {
@@ -103,6 +106,8 @@ public class DriverHelper {
 	 *            The grid URL.
 	 * @param useGrid
 	 *            Whether to use the grid or not.
+	 * @param caps
+	 *            The capabilities for to use with the driver, or null.
 	 * @return The WebDriver object.
 	 */
 	public static WebDriver createDriver(Browser browser, URL gridUrl, boolean useGrid, DesiredCapabilities caps) {

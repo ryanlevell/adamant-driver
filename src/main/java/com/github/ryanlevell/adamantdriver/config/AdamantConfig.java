@@ -87,7 +87,7 @@ public class AdamantConfig {
 	/**
 	 * If Selenium grid should be used via {@link Prop#USE_GRID}.
 	 * 
-	 * @return
+	 * @return True if the grid should be used for tests.
 	 */
 	public static boolean getUseGrid() {
 		String useGridStr = AdamantProperties.getValue(Prop.USE_GRID);
@@ -103,11 +103,10 @@ public class AdamantConfig {
 	 * {@link DriverCapabilities} implementation via
 	 * {@link Prop#CAPABILITIES_CLASS}.
 	 * 
-	 * @return
+	 * @return The capabilities with possibly added user provided capabilities.
 	 */
 	public static DesiredCapabilities getCapabilities() {
 
-		// TODO: add tests
 		DesiredCapabilities caps = getCapabilities(getBrowser());
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
@@ -138,8 +137,6 @@ public class AdamantConfig {
 		}
 
 		((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
-		// caps = ((DriverCapabilities) customCaps).getCapabilties(getBrowser(),
-		// caps);
 
 		return caps;
 	}
@@ -155,7 +152,6 @@ public class AdamantConfig {
 	 */
 	public static void getOptions(WebDriver driver) {
 
-		// TODO: add tests
 		String className = AdamantProperties.getValue(Prop.OPTIONS_CLASS);
 
 		// do nothing
@@ -191,7 +187,7 @@ public class AdamantConfig {
 	 * Initializes and starts {@link BrowserMobProxy}.<br>
 	 * The {@link BrowserMobProxy} object can be enhanced with interceptors,
 	 * header editing, etc by calling a {@link DriverProxy} implementation via
-	 * {@value Prop#PROXY_CLASS}.
+	 * {@link Prop#PROXY_CLASS}.
 	 * 
 	 * @return The {@link BrowserMobProxy} and {@link Proxy} tuple.
 	 */
