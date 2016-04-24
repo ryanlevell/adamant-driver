@@ -179,7 +179,7 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 					if (caps.getCapability(CapabilityType.PROXY) != null) {
 						LOG.warn(
-								"Found proxy capability. Overwriting with built-in proxy. Remove BrowserMobProxy parameter from test parameter to use initial proxy");
+								"Found proxy capability. Overwriting with built-in proxy. Remove BrowserMobProxy parameter from test parameter to use original proxy");
 					}
 
 					Pair<BrowserMobProxy, Proxy> proxyTuple = AdamantConfig.getProxy();

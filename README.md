@@ -9,10 +9,14 @@ The first 3 steps will get you started:
 3. **[Add AdamantListener to testng.xml](#add-list)**
 4. [Using a DataProvider](#dp)
 5. [AdamantDriver Parameters](#test-params)
-6. [Manually building the project](#manual-build)
-7. [Limitations](#limitations)
-8. [TODO Features](#todo)
-9. [Help](#help)
+6. [The DriverCapabilties Interface](#caps-int)
+7. [The DriverOptions Interface](#options-int)
+8. [The DriverProxy Interface](#proxy-int)
+9. [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp)
+10. [Manually building the project](#manual-build)
+11. [Limitations](#limitations)
+12. [TODO Features](#todo)
+13. [Help](#help)
 
 ## 1. Add the adamant-driver jar to your project<a name="add-jar"></a>
 ---
@@ -39,7 +43,7 @@ public void test(WebDriver driver) {
 }
 ```
 
-## 3. Add ```AdamantListener``` to [```testng.xml```](http://testng.org/doc/documentation-main.html#testng-xml)<a name="add-list"></a>
+## 3. Add AdamantListener to [testng.xml](http://testng.org/doc/documentation-main.html#testng-xml)<a name="add-list"></a>
 ---
 ```XML
 <suite name="SomeSuite">
@@ -75,11 +79,9 @@ public static Object[][] dataProvider() {
 ## 5. AdamantDriver Parameters<a name="test-params"></a>
 ---
 No AdamantDriver parameters are required, but they can be used for additional functionality.  
-All AdamantDriver specific parameters can be specified in 2 ways:  
-1. The testng.xml ```<suite>``` tag. (Note: Parameters in a ```<test>``` tag will not be used)
-2. From the command line.
+All AdamantDriver specific parameters can be specified in 2 ways:
 
-#### 1. testng.xml usage:
+#### 1. testng.xml parameter:
 ```XML
 ...
   <suite name="suite-name">
@@ -89,24 +91,74 @@ All AdamantDriver specific parameters can be specified in 2 ways:
 ...
 ```
 
-#### 2. command line usage:
+#### 2. command line parameter:
 ```BASH
 mvn test -Dparametername=parametervalue
 ```
 
 #### Parameters:
-| parameter          | values                             | default | description                    |
-|--------------------|------------------------------------|---------|--------------------------------|
-| browser            | firefox, chrome                    | firefox | The driver to use for testing. |
-| chrome_path        | *&lt;full path to chrome driver&gt;* | none    | The path to the chrome driver. |
-| capabilities_class | *&lt;fully qualified class&gt;*      | none    | The class that implements the DriverCapabilties interface. |
-| options_class      | *&lt;fully qualified class&gt;*      | none    | The class that implements the DriverOptions interface. |
-| proxy_class        | *&lt;fully qualified class&gt;*      | none    | The class that implements the DriverProxy interface. |
-| use_grid           | true, false                        | false   | Whether to run tests locally or on the grid. |
-| grid_url           | *&lt;your grid URL&gt;*              | none    | The URL to the Selenium grid hub. |
+|parameter         |values                              |default|description                                               |
+|------------------|------------------------------------|-------|----------------------------------------------------------|
+|browser           |firefox, chrome                     |firefox|The driver to use for testing.                            |
+|chrome_path       |*&lt;full path to chrome driver&gt;*|none   |The path to the chrome driver.                            |
+|capabilities_class|*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverCapabilties interface.|
+|options_class     |*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverOptions interface.    |
+|proxy_class       |*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverProxy interface.      |
+|use_grid          |true, false                         |false  |Whether to run tests locally or on the grid.              |
+|grid_url          |*&lt;your grid URL&gt;*             |none   |The URL to the Selenium grid hub.                         |
 
+## 6. The DriverCapabilties Interface<a name="caps-int"></a>
+---
+The DriverCapabilities interface provides a way to supply custom [DesiredCapabilties](https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities) to the WebDriver object before the test if the capabilities_class parameter is set.
+```JAVA
+public class MyCapabilities implements DriverCapabilities {
+	public void getCapabilties(Browser browser, DesiredCapabilities caps) {
+		caps.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, "accept");
+	}
+}
+```
 
-## 6. Manually building the project<a name="manual-build"></a>
+## 7. The DriverOptions Interface<a name="options-int"></a>
+---
+The DriverOptions interface provides a way to supply custom [Options](https://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/WebDriver.Options.html) to the WebDriver object before the test if the options_class parameter is set.
+```JAVA
+public class MyOptions implements DriverOptions {
+	public void getOptions(Browser browser, Options options) {
+		options.window().maximize();
+	}
+}
+```
+
+## 8. The DriverProxy Interface<a name="proxy-int"></a>
+---
+The DriverProxy interface provides a way to supply custom [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) settings before a test if the proxy_class parameter is set and [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp) is injected. Note, if you manually set a proxy in DesiredCapabilties this will NOT be used and if the injected BrowserMobProxy is present, it will override the initial proxy.
+```JAVA
+public class MyProxy implements DriverProxy {
+	public void getProxy(BrowserMobProxy proxy) {
+		proxy.addResponseFilter(new ResponseFilter() {
+			public void filterResponse(HttpResponse response, HttpMessageContents contents, HttpMessageInfo messageInfo) {
+				contents.setTextContents("Edit the response before testing");
+			}
+		});
+	}
+}
+```
+
+## 9. Injecting a BrowserMobProxy object as a test parameter<a name="inject-bmp"></a>
+---
+In addition to injecting a WebDriver object, a [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) object can also be injected. The proxy object **must be the second parameter** and the **first parameter must be a WebDriver object**. As usual, a DataProvider can still be used with the same rule as when injecting a WebDriver object: the DataProvider parameters must follow the WebDriver and BrowserMobProxy parameters. The proxy can be customized before a test by implmenting [The DriverProxy Interface](#proxy-int).
+```JAVA
+@Test
+public void testProxyHar(WebDriver driver, BrowserMobProxy proxy) {
+	proxy.newHar();
+	driver.get("https://google.com");
+	
+	List<HarEntry> harEntries = proxy.getHar().getLog().getEntries();
+	Assert.assertTrue(!harEntries.isEmpty(), "Har was empty");
+}
+```
+
+## 10. Manually building the project<a name="manual-build"></a>
 ---
 ```bash
 git clone https://github.com/ryanlevell/adamant-driver.git
@@ -115,19 +167,19 @@ mvn package -Dmaven.test.skip=true
 ```
 The jar can be found in ```<project root>/target/adamant-driver...jar-with-dependencies.jar```.
 
-## 7. Limitations<a name="limitations"></a>
+## 11. Limitations<a name="limitations"></a>
 ---
 1. The TestNG ```@Parameter``` annotation cannot be used with a WebDriver test. This is because AdamantDriver injects a data provider to all WebDriver tests.
 2. Only ```FirefoxDriver``` and ```ChromeDriver``` can be used. More browsers will be added.
 3. Anything not supported described in [TODO Features](#todo).
 
 
-## 8. TODO Features<a name="todo"></a>
+## 12. TODO Features<a name="todo"></a>
 ---
 1. Screenshots + path/folder
 2. Retry analyzer + boolean whether to remove retries from results
 
-## 9. Help<a name="help"></a>
+## 13. Help<a name="help"></a>
 ---
 
 #### How do I use SNAPSHOT versions?
@@ -142,7 +194,7 @@ SNAPSHOT versions can be used by adding the following to ```settings.xml``` or `
 ```
 
 #### Can ```@Listener(AdamantListener)``` be used instead of the ```<listener>``` tag?
-No, AdamantListener implements ```IAnnotationTransformer```. The [documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
+No, AdamantListener implements ```IAnnotationTransformer```. The [TestNG documentation](http://testng.org/doc/documentation-main.html#listeners-testng-xml) states:
 >The @Listeners annotation can contain any class that extends org.testng.ITestNGListener
 **except IAnnotationTransformer and IAnnotationTransformer2**. The reason is that these
 listeners need to be known very early in the process so that TestNG can use them to
