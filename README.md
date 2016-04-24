@@ -131,7 +131,7 @@ public class MyOptions implements DriverOptions {
 
 ## 8. The DriverProxy Interface<a name="proxy-int"></a>
 ---
-The DriverProxy interface provides a way to supply custom [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) settings before a test if the proxy_class parameter is set and [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp) is injected. Note, if you manually set a proxy in DesiredCapabilities this will NOT be used and if the injected BrowserMobProxy is present, it will override the initial proxy.
+The DriverProxy interface provides a way to supply custom [BrowserMobProxy](http://bmp.lightbody.net/) settings before a test if the proxy_class parameter is set and [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp) is injected. Note, if you manually set a proxy in DesiredCapabilities this will NOT be used and if the injected BrowserMobProxy is present, it will override the initial proxy.
 ```JAVA
 public class MyProxy implements DriverProxy {
 	public void getProxy(BrowserMobProxy proxy) {
@@ -146,7 +146,7 @@ public class MyProxy implements DriverProxy {
 
 ## 9. Injecting a BrowserMobProxy object as a test parameter<a name="inject-bmp"></a>
 ---
-In addition to injecting a WebDriver object, a [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) object can also be injected. The proxy object **must be the second parameter** and the **first parameter must be a WebDriver object**. As usual, a DataProvider can still be used with the same rule as when injecting a WebDriver object: the DataProvider parameters must follow the WebDriver and BrowserMobProxy parameters. The proxy can be customized before a test by implementing [The DriverProxy Interface](#proxy-int).
+In addition to injecting a WebDriver object, a [BrowserMobProxy](http://bmp.lightbody.net/) object can also be injected. The proxy object **must be the second parameter** and the **first parameter must be a WebDriver object**. As usual, a DataProvider can still be used with the same rule as when injecting a WebDriver object: the DataProvider parameters must follow the WebDriver and BrowserMobProxy parameters. The proxy can be customized before a test by implementing [The DriverProxy Interface](#proxy-int).
 ```JAVA
 @Test
 public void test(WebDriver driver, BrowserMobProxy proxy) {
@@ -163,7 +163,7 @@ public void test(WebDriver driver, BrowserMobProxy proxy) {
 ```bash
 git clone https://github.com/ryanlevell/adamant-driver.git
 cd adamant-driver
-mvn package -Dmaven.test.skip=true
+mvn package -Dmaven.test.skip=true -Dorg.slf4j.simpleLogger.defaultLogLevel=debug
 ```
 The jar can be found in ```<project root>/target/adamant-driver...jar-with-dependencies.jar```.
 
