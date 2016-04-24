@@ -2,14 +2,14 @@
 
 AdamantDriver is a library combining Selenium WebDriver + TestNG. It enables a user to begin writing tests very quickly with very little boiler-plate code.
 
-The first 3 steps will get you started:
+The first 3 links will get you started. Links 4-9 are advanced usage.
 
 1. **[Add the adamant-driver jar to your project](#add-jar)**
 2. **[Inject a WebDriver object as a test parameter](#inject-wd)**
 3. **[Add AdamantListener to testng.xml](#add-list)**
 4. [Using a DataProvider](#dp)
 5. [AdamantDriver Parameters](#test-params)
-6. [The DriverCapabilties Interface](#caps-int)
+6. [The DriverCapabilities Interface](#caps-int)
 7. [The DriverOptions Interface](#options-int)
 8. [The DriverProxy Interface](#proxy-int)
 9. [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp)
@@ -85,7 +85,7 @@ All AdamantDriver specific parameters can be specified in 2 ways:
 ```XML
 ...
   <suite name="suite-name">
-    <parameter name="parameter-name" value="parameter-value" />
+    <parameter name="parameter_name" value="parameter_value" />
     ...
   </suite>
 ...
@@ -93,7 +93,7 @@ All AdamantDriver specific parameters can be specified in 2 ways:
 
 #### 2. command line parameter:
 ```BASH
-mvn test -Dparametername=parametervalue
+mvn test -Dparameter_name=parameter_value
 ```
 
 #### Parameters:
@@ -101,18 +101,18 @@ mvn test -Dparametername=parametervalue
 |------------------|------------------------------------|-------|----------------------------------------------------------|
 |browser           |firefox, chrome                     |firefox|The driver to use for testing.                            |
 |chrome_path       |*&lt;full path to chrome driver&gt;*|none   |The path to the chrome driver.                            |
-|capabilities_class|*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverCapabilties interface.|
-|options_class     |*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverOptions interface.    |
-|proxy_class       |*&lt;fully qualified class&gt;*     |none   |The class that implements the DriverProxy interface.      |
+|capabilities_class|*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverCapabilities interface.|
+|options_class     |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverOptions interface.    |
+|proxy_class       |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverProxy interface.      |
 |use_grid          |true, false                         |false  |Whether to run tests locally or on the grid.              |
 |grid_url          |*&lt;your grid URL&gt;*             |none   |The URL to the Selenium grid hub.                         |
 
-## 6. The DriverCapabilties Interface<a name="caps-int"></a>
+## 6. The DriverCapabilities Interface<a name="caps-int"></a>
 ---
-The DriverCapabilities interface provides a way to supply custom [DesiredCapabilties](https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities) to the WebDriver object before the test if the capabilities_class parameter is set.
+The DriverCapabilities interface provides a way to supply custom [DesiredCapabilities](https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities) to the WebDriver object before the test if the capabilities_class parameter is set.
 ```JAVA
 public class MyCapabilities implements DriverCapabilities {
-	public void getCapabilties(Browser browser, DesiredCapabilities caps) {
+	public void getCapabilities(Browser browser, DesiredCapabilities caps) {
 		caps.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, "accept");
 	}
 }
@@ -131,7 +131,7 @@ public class MyOptions implements DriverOptions {
 
 ## 8. The DriverProxy Interface<a name="proxy-int"></a>
 ---
-The DriverProxy interface provides a way to supply custom [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) settings before a test if the proxy_class parameter is set and [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp) is injected. Note, if you manually set a proxy in DesiredCapabilties this will NOT be used and if the injected BrowserMobProxy is present, it will override the initial proxy.
+The DriverProxy interface provides a way to supply custom [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) settings before a test if the proxy_class parameter is set and [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp) is injected. Note, if you manually set a proxy in DesiredCapabilities this will NOT be used and if the injected BrowserMobProxy is present, it will override the initial proxy.
 ```JAVA
 public class MyProxy implements DriverProxy {
 	public void getProxy(BrowserMobProxy proxy) {
@@ -146,10 +146,10 @@ public class MyProxy implements DriverProxy {
 
 ## 9. Injecting a BrowserMobProxy object as a test parameter<a name="inject-bmp"></a>
 ---
-In addition to injecting a WebDriver object, a [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) object can also be injected. The proxy object **must be the second parameter** and the **first parameter must be a WebDriver object**. As usual, a DataProvider can still be used with the same rule as when injecting a WebDriver object: the DataProvider parameters must follow the WebDriver and BrowserMobProxy parameters. The proxy can be customized before a test by implmenting [The DriverProxy Interface](#proxy-int).
+In addition to injecting a WebDriver object, a [BrowserMobProxy](https://github.com/lightbody/browsermob-proxy#http-request-manipulation) object can also be injected. The proxy object **must be the second parameter** and the **first parameter must be a WebDriver object**. As usual, a DataProvider can still be used with the same rule as when injecting a WebDriver object: the DataProvider parameters must follow the WebDriver and BrowserMobProxy parameters. The proxy can be customized before a test by implementing [The DriverProxy Interface](#proxy-int).
 ```JAVA
 @Test
-public void testProxyHar(WebDriver driver, BrowserMobProxy proxy) {
+public void test(WebDriver driver, BrowserMobProxy proxy) {
 	proxy.newHar();
 	driver.get("https://google.com");
 	
