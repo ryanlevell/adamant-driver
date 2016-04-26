@@ -75,52 +75,28 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	 * Stop WebDriver and Proxy.
 	 */
 	public void onTestSuccess(ITestResult result) {
-		try {
-			DriverHelper.closeDriver(result);
-		} finally {
-			DriverHelper.stopProxy(result);
-		}
-		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
-		LOG.info("Stopping test #" + testNum);
+		teardown(result);
 	}
 
 	/**
 	 * Stop WebDriver and Proxy.
 	 */
 	public void onTestFailure(ITestResult result) {
-		try {
-			DriverHelper.closeDriver(result);
-		} finally {
-			DriverHelper.stopProxy(result);
-		}
-		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
-		LOG.info("Stopping test #" + testNum);
+		teardown(result);
 	}
 
 	/**
 	 * Stop WebDriver and Proxy.
 	 */
 	public void onTestSkipped(ITestResult result) {
-		try {
-			DriverHelper.closeDriver(result);
-		} finally {
-			DriverHelper.stopProxy(result);
-		}
-		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
-		LOG.info("Stopping test #" + testNum);
+		teardown(result);
 	}
 
 	/**
 	 * Stop WebDriver and Proxy.
 	 */
 	public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-		try {
-			DriverHelper.closeDriver(result);
-		} finally {
-			DriverHelper.stopProxy(result);
-		}
-		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
-		LOG.info("Stopping test #" + testNum);
+		teardown(result);
 	}
 
 	/**
@@ -164,7 +140,8 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 		testResult.setAttribute(ATTR_TEST_NUMBER, num);
 		LOG.info("Starting test #" + num);
 
-		WebDriver driver = DriverHelper.getDriver(testResult);
+		WebDriver driver = DriverHelper.getDriverFromTestParams(testResult);
+
 		if (driver != null) {
 
 			// instantiate driver - currently stubbed
@@ -173,28 +150,40 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 			boolean useGrid = AdamantConfig.getUseGrid();
 			DesiredCapabilities caps = AdamantConfig.getCapabilities();
 
-			if (testResult.getParameters() != null && testResult.getParameters().length > 1) {
-				Object param2 = testResult.getParameters()[1];
-				if (param2 instanceof BrowserMobProxy) {
+			BrowserMobProxy proxy = DriverHelper.getProxyFromTestParams(testResult);
+			if (proxy != null) {
 
-					if (caps.getCapability(CapabilityType.PROXY) != null) {
-						LOG.warn(
-								"Found proxy capability. Overwriting with built-in proxy. Remove BrowserMobProxy parameter from test parameter to use original proxy");
-					}
-
-					Pair<BrowserMobProxy, Proxy> proxyTuple = AdamantConfig.getProxy();
-					testResult.getParameters()[1] = proxyTuple.getLeft();
-					caps.setCapability(CapabilityType.PROXY, proxyTuple.getRight());
-					testResult.setAttribute(ATTR_PROXY, proxyTuple.getLeft());
+				if (caps.getCapability(CapabilityType.PROXY) != null) {
+					LOG.warn(
+							"Found proxy capability. Overwriting with built-in proxy. Remove BrowserMobProxy parameter from test parameter to use original proxy");
 				}
+
+				Pair<BrowserMobProxy, Proxy> proxyTuple = AdamantConfig.getProxy();
+				DriverHelper.setProxyTestParam(testResult, proxyTuple, caps);
 			}
 
 			LOG.info("Starting WebDriver");
 			WebDriver wd = DriverHelper.createDriver(browser, gridUrl, useGrid, caps);
 			AdamantConfig.getOptions(wd);
-			DriverHelper.setDriver(testResult, wd);
+			DriverHelper.setDriverTestParam(testResult, wd);
 		}
 
 		callBack.runTestMethod(testResult);
+	}
+
+	/**
+	 * Stop WebDriver and proxy if needed.
+	 * 
+	 * @param result
+	 *            The current test result object.
+	 */
+	private void teardown(ITestResult result) {
+		try {
+			DriverHelper.closeDriver(result);
+		} finally {
+			DriverHelper.stopProxy(result);
+		}
+		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		LOG.info("Stopping test #" + testNum);
 	}
 }

@@ -116,27 +116,8 @@ public class AdamantConfig {
 		}
 
 		// additional custom caps
-		Class<?> clazz = null;
-		try {
-			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Cannot find class [" + className + "]");
-		}
-
-		if (!DriverCapabilities.class.isAssignableFrom(clazz)) {
-			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
-		}
-
-		Object customCaps = null;
-		try {
-			customCaps = clazz.newInstance();
-		} catch (InstantiationException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
-		}
-
-		((DriverCapabilities) customCaps).getCapabilties(getBrowser(), caps);
+		DriverCapabilities driverCapabilities = newInstance(className, DriverCapabilities.class);
+		driverCapabilities.getCapabilties(getBrowser(), caps);
 
 		return caps;
 	}
@@ -160,27 +141,8 @@ public class AdamantConfig {
 		}
 
 		// additional custom caps
-		Class<?> clazz = null;
-		try {
-			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Cannot find class [" + className + "]");
-		}
-
-		if (!DriverOptions.class.isAssignableFrom(clazz)) {
-			throw new IllegalArgumentException("Class [" + className + "] must implement DriverCapabilities");
-		}
-
-		Object customOptions = null;
-		try {
-			customOptions = clazz.newInstance();
-		} catch (InstantiationException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverCapabilities", e);
-		}
-
-		((DriverOptions) customOptions).getOptions(getBrowser(), driver.manage());
+		DriverOptions driverOptions = newInstance(className, DriverOptions.class);
+		driverOptions.getOptions(getBrowser(), driver.manage());
 	}
 
 	/**
@@ -200,31 +162,14 @@ public class AdamantConfig {
 
 		String className = AdamantProperties.getValue(Prop.PROXY_CLASS);
 
+		// return vanilla proxy
 		if (className == null) {
 			return Pair.of(server, proxy);
 		}
 
-		Class<?> clazz = null;
-		try {
-			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Cannot find class [" + className + "]");
-		}
-
-		if (!DriverProxy.class.isAssignableFrom(clazz)) {
-			throw new IllegalArgumentException("Class [" + className + "] must implement DriverProxy");
-		}
-
-		Object customCaps = null;
-		try {
-			customCaps = clazz.newInstance();
-		} catch (InstantiationException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverProxy", e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Class [" + className + "] must implement DriverProxy", e);
-		}
-
-		((DriverProxy) customCaps).getProxy(server);
+		// additional proxy config
+		DriverProxy driverProxy = newInstance(className, DriverProxy.class);
+		driverProxy.getProxy(server);
 		return Pair.of(server, proxy);
 	}
 
@@ -248,5 +193,38 @@ public class AdamantConfig {
 			throw new NotImplementedException("Browser [" + browser + "] needs implemented");
 		}
 		return caps;
+	}
+
+	/**
+	 * Construct an object and set the type as the interface.
+	 * 
+	 * @param className
+	 *            The class name to instantiate.
+	 * @param classInterface
+	 *            The interface for the object's data type.
+	 * @return The new object.
+	 */
+	private static <T> T newInstance(String className, Class<T> classInterface) {
+		Class<?> clazz = null;
+		try {
+			clazz = AdamantConfig.class.getClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Cannot find class [" + className + "]");
+		}
+
+		if (!classInterface.isAssignableFrom(clazz)) {
+			throw new IllegalArgumentException("Class [" + className + "] must implement " + classInterface);
+		}
+
+		Object customClass = null;
+		try {
+			customClass = clazz.newInstance();
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Class [" + customClass + "] could not be instantiated", e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Class [" + customClass + "] or constrcutor could not be accessed", e);
+		}
+
+		return classInterface.cast(customClass);
 	}
 }
