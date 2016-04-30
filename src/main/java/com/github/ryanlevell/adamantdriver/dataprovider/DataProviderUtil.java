@@ -1,6 +1,5 @@
 package com.github.ryanlevell.adamantdriver.dataprovider;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -57,9 +56,9 @@ public class DataProviderUtil {
 				// abstract parent class
 				clazz = dpClass.newInstance();
 			} catch (InstantiationException e) {
-				e.printStackTrace();
+				LOG.error(Arrays.toString(e.getStackTrace()), e);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				LOG.error(Arrays.toString(e.getStackTrace()), e);
 			}
 		}
 
@@ -85,11 +84,11 @@ public class DataProviderUtil {
 				params = (Object[][]) dpMethod.invoke(clazz);
 			}
 		} catch (IllegalAccessException e) {
-			LOG.error(Arrays.toString(e.getStackTrace()));
+			LOG.error(Arrays.toString(e.getStackTrace()), e);
 		} catch (IllegalArgumentException e) {
-			LOG.error(Arrays.toString(e.getStackTrace()));
+			LOG.error(Arrays.toString(e.getStackTrace()), e);
 		} catch (InvocationTargetException e) {
-			LOG.error(Arrays.toString(e.getStackTrace()));
+			LOG.error(Arrays.toString(e.getStackTrace()), e);
 		}
 		return params;
 	}
@@ -127,14 +126,8 @@ public class DataProviderUtil {
 	 * @return Whether the test will be ran in parallel.
 	 */
 	public static boolean isParallel(Method m) {
-		// get annotations for each method in dp class
-		for (Annotation a : m.getAnnotations()) {
-			// use if annotation is dp
-			if (a.annotationType().isAssignableFrom(DataProvider.class)) {
-				return ((DataProvider) a).parallel();
-			}
-		}
-		return false;
+		DataProvider dpAnnotation = m.getAnnotation(DataProvider.class);
+		return dpAnnotation != null && dpAnnotation.parallel();
 	}
 
 	/**
@@ -160,17 +153,11 @@ public class DataProviderUtil {
 			superClass = superClass.getSuperclass();
 		}
 
-		// get all method in the dp class
+		// get all methods in the dp class
 		for (Method m : classMethods) {
-			// get annotations for each method in dp class
-			for (Annotation a : m.getAnnotations()) {
-				// use if annotation is dp
-				if (a.annotationType().isAssignableFrom(DataProvider.class)) {
-					String name = ((DataProvider) a).name();
-					if (name.equals(dpName)) {
-						return m;
-					}
-				}
+			DataProvider dpAnnotation = m.getAnnotation(DataProvider.class);
+			if (dpAnnotation != null && dpAnnotation.name().equals(dpName)) {
+				return m;
 			}
 		}
 

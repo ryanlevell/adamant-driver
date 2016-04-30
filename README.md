@@ -22,12 +22,12 @@ The first 3 links will get you started. Links 4-9 are advanced usage.
 ---
 This library is now hosted at [Maven Central](http://mvnrepository.com/artifact/com.github.ryanlevell/adamant-driver). SNAPSHOT versions are hosted at [https://oss.sonatype.org](https://oss.sonatype.org).
 
-The latest version is ```1.1.0-SNAPSHOT```:
+The latest version is ```1.1.0-beta-1```:
 ```XML
 <dependency>
   <groupId>com.github.ryanlevell</groupId>
   <artifactId>adamant-driver</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0-beta-1</version>
 </dependency>
 ```
 

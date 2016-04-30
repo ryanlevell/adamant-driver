@@ -4,14 +4,17 @@
 	<parameter name="tmp" value="suite" />
 	<parameter name="browser" value="chrome" />
 	<parameter name="capabilities_class"
-		value="com.github.ryanlevell.adamantdriver.capabilities.ChromeIncognito" />
+		value="com.github.ryanlevell.adamantdriver.interfaces.TestCapabilities" />
+	<parameter name="options_class"
+		value="com.github.ryanlevell.adamantdriver.interfaces.TestOptions" />
 	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
+	<parameter name="take_screenshot" value="none" /> <!-- all, pass, fail, skip, none -->
+	<!-- <parameter name="screenshot_path" value="blah/blah" /> -->
 	
-	<parameter name="use_grid" value="false" />
-	<parameter name="grid_url" value="http://localhost:4444/wd/hub" />
+	<!-- <parameter name="use_grid" value="false" />
+	<parameter name="grid_url" value="http://localhost:4444/wd/hub" /> -->
 	
-	<parameter name="use_included_proxy" value="false" />
-	<!-- <parameter name="proxy_class" value="com.github.ryanlevell.adamantdriver.proxy.Interceptors" /> -->
+	<parameter name="proxy_class" value="com.github.ryanlevell.adamantdriver.interfaces.TestProxy" />
 	
 	<listeners>
 		<listener class-name="com.github.ryanlevell.adamantdriver.AdamantListener" />
