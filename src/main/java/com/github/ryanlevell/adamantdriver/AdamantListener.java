@@ -3,7 +3,7 @@ package com.github.ryanlevell.adamantdriver;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.Proxy;
@@ -44,7 +44,7 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	public static final String ATTR_PROXY = "adamant_proxy";
 
 	private static Logger LOG = LoggerFactory.getLogger(AdamantListener.class);
-	private static AtomicInteger testNum = new AtomicInteger();
+	private static AtomicLong testNum = new AtomicLong();
 
 	/**
 	 * Inject custom data providers if needed.
@@ -172,18 +172,27 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	}
 
 	/**
-	 * Stop WebDriver and proxy if needed.
+	 * Test tear down process: take screenshot, shutdown driver, shutdown proxy.
 	 * 
 	 * @param result
 	 *            The current test result object.
 	 */
 	private void teardown(ITestResult result) {
-		try {
-			DriverHelper.closeDriver(result);
-		} finally {
-			DriverHelper.stopProxy(result);
-		}
-		Object testNum = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		long testNum = (Long) result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
 		LOG.info("Stopping test #" + testNum);
+		
+		try {
+			if (AdamantConfig.getTakeScreenshot(result)) {
+				WebDriver d = DriverHelper.getDriverFromTestParams(result);
+				String path = AdamantConfig.getScreenshotPath();
+				DriverHelper.takeScreenshot(d, path, testNum);
+			}
+		} finally {
+			try {
+				DriverHelper.closeDriver(result);
+			} finally {
+				DriverHelper.stopProxy(result);
+			}
+		}
 	}
 }

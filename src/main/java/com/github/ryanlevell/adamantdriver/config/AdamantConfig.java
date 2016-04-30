@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.ITestResult;
 
 import com.github.ryanlevell.adamantdriver.config.AdamantProperties.Prop;
 import com.github.ryanlevell.adamantdriver.user_interfaces.DriverCapabilities;
@@ -30,6 +31,7 @@ public class AdamantConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantConfig.class);
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
+	private static final String DEFAULT_SCREENSHOT_PATH = "screenshots";
 
 	/**
 	 * Get the chrome driver path property via {@link Prop#CHROME_PATH}.
@@ -52,7 +54,6 @@ public class AdamantConfig {
 	 * @return The browser. Defaults to {@link #DEFAULT_BROWSER}.
 	 */
 	public static Browser getBrowser() {
-
 		String browserStr = AdamantProperties.getValue(Prop.BROWSER);
 		if (browserStr != null) {
 			LOG.debug("Using browser [" + browserStr + "]");
@@ -91,10 +92,7 @@ public class AdamantConfig {
 	 */
 	public static boolean getUseGrid() {
 		String useGridStr = AdamantProperties.getValue(Prop.USE_GRID);
-		if (useGridStr == null) {
-			return false;
-		}
-		return Boolean.valueOf(useGridStr);
+		return useGridStr == null ? false : Boolean.valueOf(useGridStr);
 	}
 
 	/**
@@ -106,7 +104,6 @@ public class AdamantConfig {
 	 * @return The capabilities with possibly added user provided capabilities.
 	 */
 	public static DesiredCapabilities getCapabilities() {
-
 		DesiredCapabilities caps = getCapabilities(getBrowser());
 		String className = AdamantProperties.getValue(Prop.CAPABILITIES_CLASS);
 
@@ -132,7 +129,6 @@ public class AdamantConfig {
 	 *            The WebDriver object.
 	 */
 	public static void getOptions(WebDriver driver) {
-
 		String className = AdamantProperties.getValue(Prop.OPTIONS_CLASS);
 
 		// do nothing
@@ -154,7 +150,6 @@ public class AdamantConfig {
 	 * @return The {@link BrowserMobProxy} and {@link Proxy} tuple.
 	 */
 	public static Pair<BrowserMobProxy, Proxy> getProxy() {
-
 		LOG.info("Starting BrowserMob proxy");
 		BrowserMobProxy server = new BrowserMobProxyServer();
 		server.start();
@@ -171,6 +166,46 @@ public class AdamantConfig {
 		DriverProxy driverProxy = newInstance(className, DriverProxy.class);
 		driverProxy.getProxy(server);
 		return Pair.of(server, proxy);
+	}
+
+	/**
+	 * When screenshots should be taken using the {@link Prop#TAKE_SCREENSHOT}
+	 * value.
+	 * 
+	 * @return True if {@link ITestResult} status matches {@link ScreenshotOn}
+	 *         status, false otherwise.
+	 */
+	public static boolean getTakeScreenshot(ITestResult result) {
+		String takeScreenshot = AdamantProperties.getValue(Prop.TAKE_SCREENSHOT);
+
+		// default to none
+		if (takeScreenshot == null) {
+			return false;
+		}
+
+		ScreenshotOn on = ScreenshotOn.valueOf(takeScreenshot.toUpperCase());
+		if (on == ScreenshotOn.ALL) {
+			return true;
+		} else if (on == ScreenshotOn.NONE) {
+			return false;
+		}
+
+		// use int to match ITestResult status constants
+		int testStatus = result.getStatus();
+		int screenshotStatus = on.getStatus();
+
+		return testStatus == screenshotStatus;
+	}
+
+	/**
+	 * Get the path to save screenshots to via {@link Prop#SCREENSHOT_PATH}.
+	 * 
+	 * @return The specified path or
+	 *         {@link AdamantConfig#DEFAULT_SCREENSHOT_PATH} otherwise.
+	 */
+	public static String getScreenshotPath() {
+		String screenshotPath = AdamantProperties.getValue(Prop.SCREENSHOT_PATH);
+		return screenshotPath == null ? DEFAULT_SCREENSHOT_PATH : screenshotPath;
 	}
 
 	/**

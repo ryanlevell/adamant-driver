@@ -1,13 +1,21 @@
 package com.github.ryanlevell.adamantdriver.driver;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -176,5 +184,42 @@ public class DriverHelper {
 			}
 		}
 		return driver;
+	}
+
+	/**
+	 * Take a screenshot.
+	 * 
+	 * @param driver
+	 *            The WebDriver.
+	 * @param path
+	 *            The path to save the screenshot to.
+	 * @param testNumber
+	 *            The test number for identifying screenshot name.
+	 */
+	public static void takeScreenshot(WebDriver driver, String path, long testNumber) {
+		WebDriver augmentedDriver = driver;
+		if (!(augmentedDriver instanceof TakesScreenshot)) {
+			augmentedDriver = new Augmenter().augment(driver);
+		}
+
+		byte[] screenshotBytes = ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.BYTES);
+		Path screenshotPath = Paths.get(path);
+		Path screenshotName = screenshotPath
+				.resolve("capture" + testNumber + "_" + System.currentTimeMillis() + ".png");
+
+		// create parent directories if needed
+		if (!Files.exists(screenshotPath)) {
+			try {
+				Files.createDirectories(screenshotPath);
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Could not create path [" + path + "]", e);
+			}
+		}
+
+		try {
+			Files.write(screenshotName, screenshotBytes, StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			throw new IllegalArgumentException("Error saving to screenshot path [" + path + "]", e);
+		}
 	}
 }
