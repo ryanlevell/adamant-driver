@@ -163,7 +163,11 @@ public void test(WebDriver driver, BrowserMobProxy proxy) {
 
 ## 10. Taking Screenshots<a name="screenshot"></a>
 Screenshots can be taken using the ```take_screenshot``` parameter and optionally the ```screenshot_path``` parameter.  
-When ran with maven screenshots will default to the folder ```target/screenshots```, unless ```screenshot_path``` is specified.
+When ran with maven screenshots will default to the folder ```target/screenshots```, unless ```screenshot_path``` is specified.  
+
+Screenshot naming convention is *timestamp_testName_testNumber*.  
+The *testName* will either be the test name such as ```@Test(testName=...``` or the test method name if ```@Test(testName=...``` is not used.  
+The *testNumber* is a unique, incremented number that AdamantDriver gives to all tests.
 
 |```take_screenshot``` value|Description|
 |---------------------------|-----------|

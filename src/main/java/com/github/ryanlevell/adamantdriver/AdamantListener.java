@@ -180,12 +180,16 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	private void teardown(ITestResult result) {
 		long testNum = (Long) result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
 		LOG.info("Stopping test #" + testNum);
-		
+
 		try {
 			if (AdamantConfig.getTakeScreenshot(result)) {
 				WebDriver d = DriverHelper.getDriverFromTestParams(result);
 				String path = AdamantConfig.getScreenshotPath();
-				DriverHelper.takeScreenshot(d, path, testNum);
+
+				// get test name or method name
+				String name = result.getTestName() == null ? result.getMethod().getMethodName() : result.getTestName();
+				String testName = name + "_" + testNum;
+				DriverHelper.takeScreenshot(d, path, testName);
 			}
 		} finally {
 			try {

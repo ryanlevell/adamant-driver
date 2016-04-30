@@ -196,7 +196,7 @@ public class DriverHelper {
 	 * @param testNumber
 	 *            The test number for identifying screenshot name.
 	 */
-	public static void takeScreenshot(WebDriver driver, String path, long testNumber) {
+	public static void takeScreenshot(WebDriver driver, String path, String name) {
 		WebDriver augmentedDriver = driver;
 		if (!(augmentedDriver instanceof TakesScreenshot)) {
 			augmentedDriver = new Augmenter().augment(driver);
@@ -204,8 +204,7 @@ public class DriverHelper {
 
 		byte[] screenshotBytes = ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.BYTES);
 		Path screenshotPath = Paths.get(path);
-		Path screenshotName = screenshotPath
-				.resolve("capture" + testNumber + "_" + System.currentTimeMillis() + ".png");
+		Path screenshotName = screenshotPath.resolve(System.currentTimeMillis() + "_" + name + ".png");
 
 		// create parent directories if needed
 		if (!Files.exists(screenshotPath)) {

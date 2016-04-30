@@ -8,7 +8,7 @@
 	<parameter name="options_class"
 		value="com.github.ryanlevell.adamantdriver.interfaces.TestOptions" />
 	<parameter name="chrome_path" value="/Users/ryan/drivers/chromedriver" />
-	<parameter name="take_screenshot" value="none" /> <!-- all, pass, fail, skip, none -->
+	<parameter name="take_screenshot" value="all" /> <!-- all, pass, fail, skip, none -->
 	<!-- <parameter name="screenshot_path" value="blah/blah" /> -->
 	
 	<!-- <parameter name="use_grid" value="false" />
