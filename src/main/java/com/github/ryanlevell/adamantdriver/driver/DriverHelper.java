@@ -196,29 +196,43 @@ public class DriverHelper {
 	 * @param testNumber
 	 *            The test number for identifying screenshot name.
 	 */
-	public static void takeScreenshot(WebDriver driver, String path, String name) {
-		WebDriver augmentedDriver = driver;
-		if (!(augmentedDriver instanceof TakesScreenshot)) {
-			augmentedDriver = new Augmenter().augment(driver);
+	public static void takeScreenshot(ITestResult result, long testNum) {
+
+		WebDriver driver = DriverHelper.getDriverFromTestParams(result);
+		if (driver == null) {
+			return;
 		}
 
-		byte[] screenshotBytes = ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.BYTES);
-		Path screenshotPath = Paths.get(path);
-		Path screenshotName = screenshotPath.resolve(System.currentTimeMillis() + "_" + name + ".png");
+		if (AdamantConfig.getTakeScreenshot(result)) {
+			String path = AdamantConfig.getScreenshotPath();
 
-		// create parent directories if needed
-		if (!Files.exists(screenshotPath)) {
-			try {
-				Files.createDirectories(screenshotPath);
-			} catch (IOException e) {
-				throw new IllegalArgumentException("Could not create path [" + path + "]", e);
+			// get test name or method name
+			String name = result.getTestName() == null ? result.getMethod().getMethodName() : result.getTestName();
+			String testName = name + "_" + testNum;
+
+			WebDriver augmentedDriver = driver;
+			if (!(augmentedDriver instanceof TakesScreenshot)) {
+				augmentedDriver = new Augmenter().augment(driver);
 			}
-		}
 
-		try {
-			Files.write(screenshotName, screenshotBytes, StandardOpenOption.CREATE);
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Error saving to screenshot path [" + path + "]", e);
+			byte[] screenshotBytes = ((TakesScreenshot) augmentedDriver).getScreenshotAs(OutputType.BYTES);
+			Path screenshotPath = Paths.get(path);
+			Path screenshotName = screenshotPath.resolve(System.currentTimeMillis() + "_" + testName + ".png");
+
+			// create parent directories if needed
+			if (!Files.exists(screenshotPath)) {
+				try {
+					Files.createDirectories(screenshotPath);
+				} catch (IOException e) {
+					throw new IllegalArgumentException("Could not create path [" + path + "]", e);
+				}
+			}
+
+			try {
+				Files.write(screenshotName, screenshotBytes, StandardOpenOption.CREATE);
+			} catch (IOException e) {
+				throw new IllegalArgumentException("Error saving to screenshot path [" + path + "]", e);
+			}
 		}
 	}
 }
