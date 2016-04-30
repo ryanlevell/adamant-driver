@@ -13,10 +13,11 @@ The first 3 links will get you started. Links 4-9 are advanced usage.
 7. [The DriverOptions Interface](#options-int)
 8. [The DriverProxy Interface](#proxy-int)
 9. [Injecting a BrowserMobProxy object as a test parameter](#inject-bmp)
-10. [Manually building the project](#manual-build)
-11. [Limitations](#limitations)
-12. [TODO Features](#todo)
-13. [Help](#help)
+10. [Taking Screenshots](#screenshot)
+11. [Manually building the project](#manual-build)
+12. [Limitations](#limitations)
+13. [TODO Features](#todo)
+14. [Help](#help)
 
 ## 1. Add the adamant-driver jar to your project<a name="add-jar"></a>
 ---
@@ -101,11 +102,13 @@ mvn test -Dparameter_name=parameter_value
 |------------------|------------------------------------|-------|----------------------------------------------------------|
 |browser           |firefox, chrome                     |firefox|The driver to use for testing.                            |
 |chrome_path       |*&lt;full path to chrome driver&gt;*|none   |The path to the chrome driver.                            |
-|capabilities_class|*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverCapabilities interface.|
-|options_class     |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverOptions interface.    |
-|proxy_class       |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverProxy interface.      |
+|capabilities_class|*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverCapabilities interface. |
+|options_class     |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverOptions interface.      |
+|proxy_class       |*&lt;fully qualified class&gt;*     |none   |A class that implements the DriverProxy interface.        |
 |use_grid          |true, false                         |false  |Whether to run tests locally or on the grid.              |
 |grid_url          |*&lt;your grid URL&gt;*             |none   |The URL to the Selenium grid hub.                         |
+|take_screenshot   |all, pass, fail, skip, fail_within_success_percentage, none|none|When to take screenshots.             |
+|screenshot_path   |*&lt;relative path to a screenshot folder&gt;* |screenshots|The folder is save screenshots to.         |
 
 ## 6. The DriverCapabilities Interface<a name="caps-int"></a>
 ---
@@ -158,7 +161,20 @@ public void test(WebDriver driver, BrowserMobProxy proxy) {
 }
 ```
 
-## 10. Manually building the project<a name="manual-build"></a>
+## 10. Taking Screenshots<a name="screenshot"></a>
+Screenshots can be taken using the ```take_screenshot``` parameter and optionally the ```screenshot_path``` parameter.  
+When ran with maven screenshots will default to the folder ```target/screenshots```, unless ```screenshot_path``` is specified.
+
+|```take_screenshot``` value|Description|
+|---------------------------|-----------|
+|all|Take a screenshot after every test.|
+|pass|Take a screenshot after a test successfully passes.|
+|fail|Take a screenshot after a test fails.|
+|skip|Take a screenshot after a test is skipped.|
+|pass_within_success_percentage|Take a screenshot after a test fails, but within the [success percentage](http://testng.org/javadocs/org/testng/annotations/Test.html#successPercentage--).|
+|none|Never take a screenshot. This is the default value.|
+
+## 11. Manually building the project<a name="manual-build"></a>
 ---
 ```bash
 git clone https://github.com/ryanlevell/adamant-driver.git
@@ -167,19 +183,19 @@ mvn package -Dmaven.test.skip=true -Dorg.slf4j.simpleLogger.defaultLogLevel=debu
 ```
 The jar can be found in ```<project root>/target/adamant-driver...jar-with-dependencies.jar```.
 
-## 11. Limitations<a name="limitations"></a>
+## 12. Limitations<a name="limitations"></a>
 ---
 1. The TestNG ```@Parameter``` annotation cannot be used with a WebDriver test. This is because AdamantDriver injects a data provider to all WebDriver tests.
 2. Only ```FirefoxDriver``` and ```ChromeDriver``` can be used. More browsers will be added.
 3. Anything not supported described in [TODO Features](#todo).
 
 
-## 12. TODO Features<a name="todo"></a>
+## 13. TODO Features<a name="todo"></a>
 ---
 1. Screenshots + path/folder
 2. Retry analyzer + boolean whether to remove retries from results
 
-## 13. Help<a name="help"></a>
+## 14. Help<a name="help"></a>
 ---
 
 #### How do I use SNAPSHOT versions?
