@@ -31,7 +31,11 @@ public class AdamantConfig {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdamantConfig.class);
 	private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
+	private static final boolean DEFAULT_USE_GRID = false;
+	private static final boolean DEFAULT_TAKE_SCREENSHOT = false;
 	private static final String DEFAULT_SCREENSHOT_PATH = "screenshots";
+	private static final int DEFAULT_RETRY_COUNT = 0;
+	private static final boolean DEFAULT_DELETE_RETRIED_RESULTS = false;
 
 	/**
 	 * Get the chrome driver path property via {@link Prop#CHROME_PATH}.
@@ -92,7 +96,7 @@ public class AdamantConfig {
 	 */
 	public static boolean getUseGrid() {
 		String useGridStr = AdamantProperties.getValue(Prop.USE_GRID);
-		return useGridStr == null ? false : Boolean.valueOf(useGridStr);
+		return useGridStr == null ? DEFAULT_USE_GRID : Boolean.valueOf(useGridStr);
 	}
 
 	/**
@@ -180,7 +184,7 @@ public class AdamantConfig {
 
 		// default to none
 		if (takeScreenshot == null) {
-			return false;
+			return DEFAULT_TAKE_SCREENSHOT;
 		}
 
 		ScreenshotOn on = ScreenshotOn.valueOf(takeScreenshot.toUpperCase());
@@ -206,6 +210,35 @@ public class AdamantConfig {
 	public static String getScreenshotPath() {
 		String screenshotPath = AdamantProperties.getValue(Prop.SCREENSHOT_PATH);
 		return screenshotPath == null ? DEFAULT_SCREENSHOT_PATH : screenshotPath;
+	}
+
+	/**
+	 * Number of retries to attempt when a test fails via
+	 * {@link Prop#RETRY_COUNT}. 0 means the test will not be retried. 1 means a
+	 * single retry, or 2 tests total counting the initial test.
+	 * 
+	 * @return The specified retry count or
+	 *         {@link AdamantConfig#DEFAULT_RETRY_COUNT} otherwise.
+	 */
+	public static int getRetryLimit() {
+		int count = DEFAULT_RETRY_COUNT;
+		String countStr = AdamantProperties.getValue(Prop.RETRY_LIMIT);
+		if (countStr != null) {
+			count = Integer.parseInt(countStr);
+		}
+		return count;
+	}
+
+	/**
+	 * If retried test results should be deleted via
+	 * {@link Prop#DELETE_RETRIED_RESULTS}.
+	 * 
+	 * @return True if property is set to true,
+	 *         {@link AdamantConfig#DEFAULT_DELETE_RETRIED_RESULTS} otherwise.
+	 */
+	public static boolean getDeleteRetriedResults() {
+		String deleteResultsStr = AdamantProperties.getValue(Prop.DELETE_RETRIED_RESULTS);
+		return deleteResultsStr == null ? DEFAULT_DELETE_RETRIED_RESULTS : Boolean.valueOf(deleteResultsStr);
 	}
 
 	/**

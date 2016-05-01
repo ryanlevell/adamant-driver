@@ -54,6 +54,9 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 
 		// make sure transform is acting on a method and not class/constructor
 		if (testMethod != null) {
+
+			RetryListener.setRetryListener(annotation);
+
 			// skip if there is no WebDriver param
 			if (DataProviderUtil.hasWebDriverParam(testMethod)) {
 
@@ -178,7 +181,14 @@ public class AdamantListener implements IAnnotationTransformer, ITestListener, I
 	 *            The current test result object.
 	 */
 	private void teardown(ITestResult result) {
-		long testNum = (Long) result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+
+		Object testNumObj = result.getAttribute(AdamantListener.ATTR_TEST_NUMBER);
+		if (testNumObj == null) {
+			LOG.warn("Test result number was null, an exception was likely thrown");
+			return;
+		}
+
+		long testNum = (Long) testNumObj;
 		LOG.info("Stopping test #" + testNum);
 
 		try {

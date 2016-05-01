@@ -11,6 +11,8 @@
 	<parameter name="take_screenshot" value="all" /> <!-- all, pass, fail, skip, none -->
 	<!-- <parameter name="screenshot_path" value="blah/blah" /> -->
 	
+	<parameter name="retry_limit" value="2" />
+	
 	<!-- <parameter name="use_grid" value="false" />
 	<parameter name="grid_url" value="http://localhost:4444/wd/hub" /> -->
 	
